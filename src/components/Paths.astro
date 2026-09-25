@@ -1,0 +1,197 @@
+---
+// "What brings you to UEMS?": visitors start from their problem, not our service list.
+const paths = [
+  {
+    t: 'Raise growth capital',
+    d: 'Mobilise working capital through equity. We model valuation and dilution, prepare the round and coordinate every party through to closing.',
+    tag: 'Capital facilitation',
+    href: '#services',
+  },
+  {
+    t: 'Clean up the cap table',
+    d: 'Replace fragmented spreadsheets with one reconciled record of shareholders, share classes and instruments, ready for diligence.',
+    tag: 'Ownership management',
+    href: '#services',
+  },
+  {
+    t: 'Design an ESOP',
+    d: 'Size the pool, set vesting and administer grants your team actually understands, so equity works as a retention tool.',
+    tag: 'Equity structuring',
+    href: '#services',
+  },
+  {
+    t: 'Restructure ownership',
+    d: 'Promoter realignment, family holdings, partner buy-ins and leveraged buyout structures, designed cleanly and compliantly.',
+    tag: 'Transaction support',
+    href: '#services',
+  },
+];
+---
+<section class="paths" id="paths" data-theme="light" aria-labelledby="paths-title">
+  <div class="wrap">
+    <div class="paths__head">
+      <div>
+        <p class="eyebrow" data-fade>Start with the problem</p>
+        <h2 id="paths-title" class="h-display" data-reveal>
+          <span class="split-line"><span>What brings you</span></span>
+          <span class="split-line"><span>to <em>UEMS?</em></span></span>
+        </h2>
+      </div>
+      <p class="lede" data-fade>
+        We manage and facilitate the equity transformation businesses need to mobilise capital, with
+        frameworks built around your industry, your owners and institutional standards.
+      </p>
+    </div>
+
+    <div class="paths__grid">
+      {paths.map((p, i) => (
+        <a class="path" href={p.href} data-fade={i * 0.08} data-cursor="Learn +">
+          <span class="path__n">0{i + 1}</span>
+          <h3>{p.t}</h3>
+          <p>{p.d}</p>
+          <span class="path__foot">
+            <span class="path__tag">{p.tag}</span>
+            <span class="path__arrow" aria-hidden="true">→</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .paths {
+    padding: clamp(100px, 12vw, 170px) 0;
+  }
+  .paths__head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: end;
+    margin-bottom: clamp(48px, 6vw, 80px);
+  }
+  .paths__head .lede {
+    justify-self: end;
+    max-width: 44ch;
+    margin: 0;
+  }
+  .paths__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .path {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 340px;
+    padding: 28px 26px 24px;
+    border-radius: 22px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform 0.6s var(--ease), color 0.4s, border-color 0.4s;
+  }
+  .path::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--forest);
+    transform: translateY(101%);
+    transition: transform 0.6s var(--ease);
+    z-index: -1;
+  }
+  .path:hover,
+  .path:focus-visible {
+    transform: translateY(-6px);
+    color: var(--ivory);
+    border-color: var(--forest);
+  }
+  .path:hover::before,
+  .path:focus-visible::before {
+    transform: translateY(0);
+  }
+  .path__n {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+  .path h3 {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(26px, 2.2vw, 32px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 28px 0 0;
+    color: var(--forest);
+    transition: color 0.4s;
+  }
+  .path p {
+    margin: 0;
+    font-size: 15px;
+    color: var(--ink-60);
+    transition: color 0.4s;
+  }
+  .path:hover h3,
+  .path:focus-visible h3 {
+    color: var(--ivory);
+  }
+  .path:hover p,
+  .path:focus-visible p {
+    color: rgba(246, 244, 238, 0.75);
+  }
+  .path__foot {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 18px;
+  }
+  .path__tag {
+    font-size: 12px;
+    padding: 6px 11px;
+    border-radius: 99px;
+    box-shadow: inset 0 0 0 1px var(--line);
+    transition: box-shadow 0.4s;
+  }
+  .path:hover .path__tag {
+    box-shadow: inset 0 0 0 1px rgba(246, 244, 238, 0.3);
+  }
+  .path__arrow {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--ivory);
+    color: var(--forest);
+    transition: transform 0.5s var(--ease), background 0.4s;
+  }
+  .path:hover .path__arrow {
+    background: var(--gold);
+    color: var(--ink);
+    transform: rotate(-45deg);
+  }
+  @media (max-width: 1100px) {
+    .paths__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 760px) {
+    .paths__head {
+      grid-template-columns: 1fr;
+    }
+    .paths__head .lede {
+      justify-self: start;
+    }
+    .paths__grid {
+      grid-template-columns: 1fr;
+    }
+    .path {
+      min-height: 0;
+    }
+  }
+</style>

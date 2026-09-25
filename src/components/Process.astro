@@ -1,0 +1,209 @@
+---
+// How an engagement runs: end-to-end process ownership, in four steps.
+const steps = [
+  {
+    t: 'Diagnose',
+    d: 'A 15-minute introductory session, then a review of your current ownership, instruments, agreements and capital requirement.',
+    out: 'Ownership & capital diagnostic',
+  },
+  {
+    t: 'Structure',
+    d: 'A custom equity framework: valuation scenarios, dilution modelling, share classes and instruments aligned to institutional standards.',
+    out: 'Recommended equity structure',
+  },
+  {
+    t: 'Facilitate',
+    d: 'We coordinate your CA, CS, legal counsel, registered valuers and investors through documentation, approvals and filings.',
+    out: 'A closed, documented transaction',
+  },
+  {
+    t: 'Manage',
+    d: 'Ongoing cap-table maintenance, ESOP administration and clear ownership reporting for every stakeholder.',
+    out: 'One accurate source of truth',
+  },
+];
+---
+<section class="proc" data-theme="pale" aria-labelledby="proc-title">
+  <div class="wrap proc__grid">
+    <div class="proc__intro">
+      <p class="eyebrow" data-fade>How an engagement works</p>
+      <h2 id="proc-title" class="h-display" data-reveal>
+        <span class="split-line"><span>Structure.</span></span>
+        <span class="split-line"><span><em>Facilitate.</em></span></span>
+        <span class="split-line"><span>Grow.</span></span>
+      </h2>
+      <p class="lede" data-fade>
+        One team owns the process end to end, so founders stay focused on the business, not the
+        paperwork.
+      </p>
+    </div>
+
+    <ol class="proc__list" data-proc>
+      <span class="proc__rail" aria-hidden="true"><i data-proc-fill></i></span>
+      {steps.map((s, i) => (
+        <li class="step" data-step>
+          <span class="step__node" aria-hidden="true"></span>
+          <span class="step__n">Step 0{i + 1}</span>
+          <h3>{s.t}</h3>
+          <p>{s.d}</p>
+          <span class="step__out"><b>Outcome</b>{s.out}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { reduced } from '../scripts/site';
+
+  const steps = gsap.utils.toArray<HTMLElement>('[data-step]');
+  if (reduced) {
+    steps.forEach((s) => s.classList.add('is-on'));
+    gsap.set('[data-proc-fill]', { scaleY: 1 });
+  } else {
+    gsap.fromTo(
+      '[data-proc-fill]',
+      { scaleY: 0 },
+      {
+        scaleY: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '[data-proc]',
+          start: 'top 60%',
+          end: 'bottom 60%',
+          scrub: true,
+        },
+      },
+    );
+    steps.forEach((s) =>
+      gsap.to(s, {
+        scrollTrigger: {
+          trigger: s,
+          start: 'top 62%',
+          onEnter: () => s.classList.add('is-on'),
+          onLeaveBack: () => s.classList.remove('is-on'),
+        },
+      }),
+    );
+  }
+</script>
+
+<style>
+  .proc {
+    padding: clamp(110px, 13vw, 190px) 0;
+  }
+  .proc__grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: clamp(40px, 7vw, 120px);
+    align-items: start;
+  }
+  .proc__intro {
+    position: sticky;
+    top: 130px;
+  }
+  .proc__intro .lede {
+    margin-top: 28px;
+  }
+  .proc__list {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 44px;
+  }
+  .proc__rail {
+    position: absolute;
+    left: 7px;
+    top: 10px;
+    bottom: 10px;
+    width: 1px;
+    background: var(--ink-30);
+  }
+  .proc__rail i {
+    position: absolute;
+    inset: 0;
+    width: 2px;
+    left: -0.5px;
+    background: var(--forest);
+    transform-origin: top;
+  }
+  .step {
+    position: relative;
+    padding: 0 0 64px;
+  }
+  .step:last-child {
+    padding-bottom: 0;
+  }
+  .step__node {
+    position: absolute;
+    left: -44px;
+    top: 4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--pale);
+    border: 1.5px solid var(--ink-30);
+    transition: background 0.4s, border-color 0.4s, transform 0.6s var(--ease);
+  }
+  .step.is-on .step__node {
+    background: var(--forest);
+    border-color: var(--forest);
+    transform: scale(1.15);
+  }
+  .step:last-child.is-on .step__node {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .step__n {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+  .step h3 {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(34px, 3.4vw, 52px);
+    letter-spacing: -0.025em;
+    line-height: 1;
+    margin: 10px 0 14px;
+    color: var(--ink-30);
+    transition: color 0.5s;
+  }
+  .step.is-on h3 {
+    color: var(--forest);
+  }
+  .step p {
+    margin: 0 0 18px;
+    max-width: 50ch;
+    color: var(--fg-muted);
+  }
+  .step__out {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 14px;
+    border-radius: 99px;
+    background: var(--white);
+    font-size: 14px;
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .step__out b {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #9a7735;
+    font-weight: 500;
+  }
+  @media (max-width: 900px) {
+    .proc__grid {
+      grid-template-columns: 1fr;
+    }
+    .proc__intro {
+      position: static;
+    }
+  }
+</style>

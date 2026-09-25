@@ -1,0 +1,393 @@
+---
+// "Every business vertical": an orbit around UEMS. Choosing a vertical
+// re-tunes the whole section to that industry's equity agenda.
+const verticals = [
+  {
+    id: 'saas',
+    name: 'SaaS',
+    line: 'High-growth software companies scaling through successive rounds.',
+    items: ['Founder equity', 'ESOP pools', 'Seed / Series funding', 'Investor management'],
+  },
+  {
+    id: 'mfg',
+    name: 'Manufacturing',
+    line: 'Asset-heavy enterprises funding plants, capacity and supply chains.',
+    items: ['Plant expansion', 'Working capital', 'Strategic investors', 'Ownership restructuring'],
+  },
+  {
+    id: 'health',
+    name: 'Healthcare',
+    line: 'Multi-entity networks balancing clinicians, promoters and investors.',
+    items: ['Multi-entity ownership', 'Strategic investment', 'Expansion capital', 'Governance'],
+  },
+  {
+    id: 'retail',
+    name: 'Retail & Franchise',
+    line: 'Chains structuring ownership across founders, partners and outlets.',
+    items: ['Franchise structures', 'Partner equity', 'Growth capital', 'Entity consolidation'],
+  },
+  {
+    id: 'services',
+    name: 'Professional Services',
+    line: 'Partnership-led firms planning succession and partner economics.',
+    items: ['Partner equity', 'Succession planning', 'Buy-in / buy-out', 'Profit-share alignment'],
+  },
+];
+---
+<section class="ind" id="industries" data-theme="light" aria-labelledby="ind-title">
+  <div class="wrap">
+    <div class="ind__head">
+      <p class="eyebrow" data-fade>Industry-agnostic by design</p>
+      <h2 id="ind-title" class="ind__title" data-reveal>
+        <span class="split-line"><span>Simplified for every</span></span>
+        <span class="split-line"><span><em class="serif">business vertical.</em></span></span>
+      </h2>
+      <p class="lede" data-fade>
+        Whatever you build, equity structure is the backbone of your ownership governance. Choose a
+        vertical.
+      </p>
+    </div>
+
+    <div class="ind__grid">
+      <div class="orbit" data-orbit>
+        <svg class="orbit__rings" viewBox="0 0 600 600" aria-hidden="true">
+          <circle cx="300" cy="300" r="230" />
+          <circle cx="300" cy="300" r="160" class="dash" />
+          <circle cx="300" cy="300" r="290" class="faint" />
+          <line x1="300" y1="300" x2="300" y2="70" data-orbit-ray />
+        </svg>
+        <div class="orbit__core" aria-hidden="true">
+          <span>UEMS</span>
+        </div>
+        <div role="tablist" aria-label="Business verticals" class="orbit__nodes">
+          {verticals.map((v, i) => (
+            <button
+              role="tab"
+              class="onode"
+              id={`tab-${v.id}`}
+              aria-controls="ind-panel"
+              aria-selected={i === 0 ? 'true' : 'false'}
+              data-v={i}
+              data-cursor="Discover"
+            >
+              <i></i><span>{v.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div class="ind__panel" id="ind-panel" role="tabpanel" aria-live="polite" data-ind-panel>
+        <p class="ind__k" data-ind-k>01 / 05</p>
+        <h3 class="ind__name display" data-ind-name>{verticals[0].name}</h3>
+        <p class="ind__line" data-ind-line>{verticals[0].line}</p>
+        <ul class="ind__list" data-ind-list>
+          {verticals[0].items.map((it) => <li><span>{it}</span></li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script define:vars={{ verticals }}>
+  window.__UEMS_VERTICALS = verticals;
+</script>
+
+<script>
+  import { gsap } from 'gsap';
+  import { reduced } from '../scripts/site';
+
+  type V = { id: string; name: string; line: string; items: string[] };
+  const data = (window as unknown as { __UEMS_VERTICALS: V[] }).__UEMS_VERTICALS;
+
+  const orbit = document.querySelector<HTMLElement>('[data-orbit]')!;
+  const nodes = gsap.utils.toArray<HTMLButtonElement>('.onode');
+  const ray = orbit.querySelector<SVGLineElement>('[data-orbit-ray]')!;
+  const panel = document.querySelector<HTMLElement>('[data-ind-panel]')!;
+  const $ = (s: string) => panel.querySelector<HTMLElement>(s)!;
+
+  let active = 0;
+  let angle = -90; // degrees of the first node
+  let paused = false;
+  const R = 230 / 600; // radius relative to orbit size
+
+  function layout() {
+    const size = orbit.clientWidth;
+    nodes.forEach((n, i) => {
+      const a = ((angle + (360 / nodes.length) * i) * Math.PI) / 180;
+      const x = size / 2 + Math.cos(a) * size * R;
+      const y = size / 2 + Math.sin(a) * size * R;
+      n.style.transform = `translate(${x}px, ${y}px)`;
+      if (i === active) {
+        ray.setAttribute('x2', String(300 + Math.cos(a) * 230));
+        ray.setAttribute('y2', String(300 + Math.sin(a) * 230));
+      }
+    });
+  }
+
+  function select(i: number) {
+    if (i === active) return;
+    active = i;
+    const v = data[i];
+    nodes.forEach((n, k) => n.setAttribute('aria-selected', String(k === i)));
+    panel.setAttribute('aria-labelledby', `tab-${v.id}`);
+    const swap = () => {
+      $('[data-ind-k]').textContent = `0${i + 1} / 05`;
+      $('[data-ind-name]').textContent = v.name;
+      $('[data-ind-line]').textContent = v.line;
+      $('[data-ind-list]').innerHTML = v.items.map((t) => `<li><span>${t}</span></li>`).join('');
+    };
+    if (reduced) return swap();
+    gsap
+      .timeline()
+      .to(panel.children, { y: -14, opacity: 0, duration: 0.25, stagger: 0.03, ease: 'power2.in' })
+      .add(swap)
+      .fromTo(panel.children, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: 'expo.out' })
+      .from(panel.querySelectorAll('li'), { x: -12, opacity: 0, duration: 0.5, stagger: 0.06, ease: 'expo.out' }, '-=0.45');
+    gsap.fromTo('.orbit__core', { scale: 0.92 }, { scale: 1, duration: 0.9, ease: 'elastic.out(1,0.5)' });
+  }
+
+  nodes.forEach((n, i) => {
+    n.addEventListener('mouseenter', () => {
+      paused = true;
+      select(i);
+    });
+    n.addEventListener('mouseleave', () => (paused = false));
+    n.addEventListener('focus', () => {
+      paused = true;
+      select(i);
+    });
+    n.addEventListener('blur', () => (paused = false));
+    n.addEventListener('click', () => select(i));
+    n.addEventListener('keydown', (e) => {
+      const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+      if (d) {
+        e.preventDefault();
+        nodes[(i + d + nodes.length) % nodes.length].focus();
+      }
+    });
+  });
+
+  layout();
+  window.addEventListener('resize', layout);
+
+  if (!reduced) {
+    let visible = false;
+    new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(orbit);
+    gsap.ticker.add(() => {
+      if (!visible || paused || window.innerWidth < 900) return;
+      angle += 0.06;
+      layout();
+    });
+    gsap.from(nodes, {
+      scale: 0,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.1,
+      ease: 'back.out(2)',
+      scrollTrigger: { trigger: orbit, start: 'top 75%' },
+    });
+  }
+</script>
+
+<style>
+  .ind {
+    padding: clamp(120px, 14vw, 200px) 0;
+  }
+  .ind__head {
+    display: grid;
+    gap: 24px;
+    max-width: 900px;
+  }
+  .ind__title {
+    font-family: var(--f-serif);
+    font-size: clamp(42px, 6.4vw, 104px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    font-weight: 400;
+    margin: 0;
+    color: var(--forest);
+  }
+  .ind__title em {
+    color: var(--emerald);
+  }
+  .ind__grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(40px, 6vw, 100px);
+    align-items: center;
+    margin-top: clamp(40px, 6vw, 80px);
+  }
+
+  .orbit {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    aspect-ratio: 1;
+    justify-self: center;
+  }
+  .orbit__rings {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: var(--forest);
+    stroke-opacity: 0.22;
+  }
+  .orbit__rings .dash {
+    stroke-dasharray: 2 6;
+    stroke-opacity: 0.35;
+  }
+  .orbit__rings .faint {
+    stroke-opacity: 0.08;
+  }
+  .orbit__rings line {
+    stroke: var(--gold);
+    stroke-opacity: 0.9;
+    stroke-width: 1.4;
+  }
+  .orbit__core {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 32%;
+    aspect-ratio: 1;
+    margin: -16% 0 0 -16%;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(circle at 32% 28%, #1a8f6c 0%, var(--emerald) 30%, var(--forest) 75%);
+    box-shadow: inset 0 -20px 40px rgba(0, 0, 0, 0.25), inset 0 0 0 1px rgba(198, 161, 91, 0.6),
+      0 30px 80px -20px rgba(7, 61, 50, 0.5);
+    color: var(--ivory);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    font-size: clamp(14px, 1.6vw, 20px);
+  }
+  .orbit__nodes {
+    position: absolute;
+    inset: 0;
+  }
+  .onode {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    translate: -50% -9px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--forest);
+  }
+  .onode i {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--ivory);
+    border: 1.5px solid var(--forest);
+    transition: background 0.35s, transform 0.5s var(--ease), border-color 0.35s;
+    flex: none;
+  }
+  .onode span {
+    padding: 6px 12px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--ivory) 85%, transparent);
+    box-shadow: inset 0 0 0 1px var(--line);
+    transition: background 0.35s, color 0.35s;
+  }
+  .onode[aria-selected='true'] i {
+    background: var(--gold);
+    border-color: var(--gold);
+    transform: scale(1.35);
+  }
+  .onode[aria-selected='true'] span {
+    background: var(--forest);
+    color: var(--ivory);
+  }
+
+  .ind__panel {
+    border-left: 1px solid var(--rule);
+    padding-left: clamp(24px, 3vw, 48px);
+  }
+  .ind__k {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    margin: 0;
+  }
+  .ind__name {
+    font-family: var(--f-serif);
+    font-size: clamp(40px, 5vw, 78px);
+    color: var(--forest);
+    margin: 18px 0 16px;
+    line-height: 1.02;
+    font-weight: 400;
+  }
+  .ind__line {
+    color: var(--fg-muted);
+    margin: 0 0 32px;
+    max-width: 38ch;
+  }
+  .ind__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .ind__list :global(li) {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: clamp(18px, 1.6vw, 22px);
+    letter-spacing: -0.015em;
+  }
+  .ind__list :global(li)::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--emerald);
+    flex: none;
+  }
+
+  @media (max-width: 900px) {
+    .ind__grid {
+      grid-template-columns: 1fr;
+    }
+    .orbit {
+      max-width: 420px;
+      width: 88%;
+    }
+    .onode {
+      font-size: 12px;
+    }
+    /* small screens: only the selected vertical is labelled; dots get a finger-sized hit area */
+    .onode span {
+      display: none;
+    }
+    .onode[aria-selected='true'] span {
+      display: block;
+    }
+    .onode i {
+      position: relative;
+    }
+    .onode i::after {
+      content: '';
+      position: absolute;
+      inset: -13px;
+    }
+    .onode span {
+      padding: 4px 8px;
+    }
+    .ind__panel {
+      border-left: 0;
+      padding-left: 0;
+    }
+  }
+</style>

@@ -1,0 +1,472 @@
+---
+import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const path = Astro.url.pathname;
+const nav = [
+  { href: '/#services', label: 'Solutions' },
+  { href: '/#industries', label: 'Industries' },
+  { href: '/about', label: 'About' },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#073D32" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..500;1,9..144,300..500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <!-- Loader + page transition: the equity-node mark assembles, then lifts -->
+    <div class="curtain" aria-hidden="true" data-curtain>
+      <svg class="curtain__mark" viewBox="0 0 120 120" fill="none">
+        <path class="c-edge" d="M60 12 L108 60 L60 108 L12 60 Z" />
+        <path class="c-edge c-edge--soft" d="M60 12 V108 M12 60 H108" />
+        <circle class="c-node" cx="60" cy="12" r="6" />
+        <circle class="c-node" cx="108" cy="60" r="6" />
+        <circle class="c-node" cx="60" cy="108" r="6" />
+        <circle class="c-node" cx="12" cy="60" r="6" />
+        <circle class="c-hub" cx="60" cy="60" r="10" />
+      </svg>
+      <span class="curtain__word">Universal Equity Management Solutions</span>
+    </div>
+
+    <header class="nav" data-nav>
+      <div class="nav__inner">
+        <a href="/" class="nav__brand" aria-label="Universal Equity Management Solutions, home">
+          <Logo size={30} />
+          <span class="nav__word">UEMS</span>
+        </a>
+        <nav class="nav__links" aria-label="Primary">
+          {nav.map((n) => (
+            <a href={n.href} class:list={[{ active: path === n.href }]}>{n.label}</a>
+          ))}
+        </nav>
+        <a href="/contact" class="nav__cta" data-cursor="Explore →">
+          Request a Consultation <span aria-hidden="true">→</span>
+        </a>
+        <button class="nav__toggle" aria-expanded="false" aria-controls="menu" data-menu-toggle>
+          <span></span><span></span><span class="sr">Menu</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="menu" id="menu" data-menu hidden>
+      <nav aria-label="Mobile">
+        {nav.map((n, i) => (
+          <a href={n.href} data-menu-link><small>0{i + 1}</small>{n.label}</a>
+        ))}
+        <a href="/contact" data-menu-link><small>0{nav.length + 1}</small>Contact</a>
+      </nav>
+      <p class="menu__foot">Hyderabad · Mumbai · Bangalore</p>
+    </div>
+
+
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="footer" data-theme="dark">
+      <div class="wrap">
+        <div class="footer__top">
+          <div class="footer__brand">
+            <Logo size={44} />
+            <p class="display footer__name">Universal Equity<br />Management Solutions</p>
+          </div>
+          <div class="footer__cols">
+            <div>
+              <p class="eyebrow">Explore</p>
+              <a href="/#services">Solutions</a>
+              <a href="/#industries">Industries</a>
+              <a href="/about">About</a>
+              <a href="/contact">Contact</a>
+            </div>
+            <div>
+              <p class="eyebrow">Reach us</p>
+              <a href="mailto:contact@yourfirm.com">contact@yourfirm.com</a>
+              <a href="tel:+18005550199">+1 (800) 555-0199</a>
+            </div>
+            <div>
+              <p class="eyebrow">Offices</p>
+              <span>Hyderabad</span>
+              <span>Mumbai</span>
+              <span>Bangalore</span>
+            </div>
+          </div>
+        </div>
+        <hr class="rule" />
+        <div class="footer__bottom">
+          <span>© {new Date().getFullYear()} Universal Equity Management Solutions</span>
+          <span class="footer__note">
+            UEMS provides equity advisory, administration and transaction coordination. Activities
+            requiring regulatory registration are carried out with appropriately licensed
+            professionals and intermediaries.
+          </span>
+        </div>
+      </div>
+    </footer>
+
+    <div class="cursor" aria-hidden="true" data-cursor-el>
+      <div class="cursor__ring"><span class="cursor__label" data-cursor-label></span></div>
+      <div class="cursor__dot"></div>
+    </div>
+
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>
+
+<style>
+  .curtain {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background: var(--forest);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    color: var(--ivory);
+    /* failsafe: never trap the page if scripts fail */
+    animation: curtain-failsafe 0.4s 4s forwards;
+  }
+  :global(html.js) .curtain {
+    display: flex;
+  }
+  @keyframes curtain-failsafe {
+    to {
+      visibility: hidden;
+      opacity: 0;
+    }
+  }
+  .curtain__mark {
+    width: 84px;
+    overflow: visible;
+  }
+  .c-edge {
+    stroke: var(--ivory);
+    stroke-opacity: 0.55;
+    stroke-width: 1.4;
+    stroke-dasharray: 280;
+  }
+  .c-edge--soft {
+    stroke-opacity: 0.2;
+  }
+  .c-node {
+    fill: var(--ivory);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .c-hub {
+    fill: var(--gold);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .curtain__word {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(246, 244, 238, 0.6);
+  }
+  .skip {
+    position: absolute;
+    left: -9999px;
+  }
+  .skip:focus {
+    left: 16px;
+    top: 16px;
+    z-index: 200;
+    background: var(--forest);
+    color: var(--ivory);
+    padding: 10px 16px;
+    border-radius: 8px;
+  }
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  /* ---------- nav ---------- */
+  .nav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 80;
+    padding: 18px var(--gutter);
+    transition: transform 0.6s var(--ease);
+  }
+  .nav.is-hidden {
+    transform: translateY(-110%);
+  }
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 10px 10px 10px 18px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ivory) 72%, transparent);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    box-shadow: inset 0 0 0 1px var(--line);
+    color: var(--ink);
+    transition: background 0.6s var(--ease), color 0.6s var(--ease), box-shadow 0.6s var(--ease);
+  }
+  :global(body.is-dark) .nav__inner {
+    background: color-mix(in srgb, var(--forest) 70%, transparent);
+    color: #f5f5f0;
+    box-shadow: inset 0 0 0 1px rgba(245, 245, 240, 0.12);
+  }
+  .nav__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--forest);
+  }
+  :global(body.is-dark) .nav__brand {
+    color: var(--ivory);
+  }
+  .nav__word {
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-size: 15px;
+    color: currentColor;
+  }
+  .nav__links {
+    display: flex;
+    gap: 26px;
+    margin-left: auto;
+    font-size: 14px;
+  }
+  .nav__links a {
+    position: relative;
+    opacity: 0.78;
+    transition: opacity 0.3s;
+  }
+  .nav__links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.45s var(--ease);
+  }
+  .nav__links a:hover,
+  .nav__links a.active {
+    opacity: 1;
+  }
+  .nav__links a:hover::after,
+  .nav__links a.active::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  .nav__cta {
+    padding: 11px 18px;
+    border-radius: 999px;
+    background: var(--forest);
+    color: var(--ivory);
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.3s;
+  }
+  .nav__cta:hover {
+    background: var(--emerald);
+  }
+  :global(body.is-dark) .nav__cta {
+    background: var(--gold);
+    color: var(--ink);
+  }
+  .nav__toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--forest);
+    position: relative;
+  }
+  .nav__toggle span:not(.sr) {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    height: 1.5px;
+    background: var(--ivory);
+    transition: transform 0.4s var(--ease);
+  }
+  .nav__toggle span:nth-child(1) {
+    top: 18px;
+  }
+  .nav__toggle span:nth-child(2) {
+    top: 25px;
+  }
+  .nav__toggle[aria-expanded='true'] span:nth-child(1) {
+    transform: translateY(3.5px) rotate(45deg);
+  }
+  .nav__toggle[aria-expanded='true'] span:nth-child(2) {
+    transform: translateY(-3.5px) rotate(-45deg);
+  }
+
+  @media (max-width: 900px) {
+    .nav__links,
+    .nav__cta {
+      display: none;
+    }
+    .nav__toggle {
+      display: block;
+      margin-left: auto;
+    }
+  }
+
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    background: var(--forest);
+    color: var(--ivory);
+    padding: 120px var(--gutter) 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .menu[hidden] {
+    display: none;
+  }
+  .menu nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .menu a {
+    font-size: clamp(40px, 11vw, 72px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .menu small {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+  .menu__foot {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  /* ---------- footer ---------- */
+  .footer {
+    padding: 120px 0 40px;
+    color: #f5f5f0;
+    background: var(--forest);
+    position: relative;
+    z-index: 2;
+  }
+  .footer .eyebrow {
+    color: rgba(245, 245, 240, 0.55);
+  }
+  .footer .eyebrow::before {
+    background: var(--gold);
+  }
+  .footer .rule {
+    background: rgba(245, 245, 240, 0.14);
+  }
+  .footer__top {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 60px;
+    padding-bottom: 80px;
+  }
+  .footer__brand {
+    color: var(--ivory);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .footer__name {
+    font-family: var(--f-serif);
+    font-size: clamp(32px, 4vw, 56px);
+    text-transform: none;
+    line-height: 1.02;
+    font-weight: 400;
+  }
+  .footer__cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .footer__cols > div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 15px;
+  }
+  .footer__cols a {
+    opacity: 0.85;
+    transition: color 0.3s;
+    overflow-wrap: anywhere;
+  }
+  .footer__cols a:hover {
+    color: var(--gold);
+  }
+  .footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    padding-top: 28px;
+    font-size: 13px;
+    color: rgba(245, 245, 240, 0.55);
+  }
+  .footer__note {
+    max-width: 62ch;
+    text-align: right;
+  }
+  @media (max-width: 900px) {
+    .footer__top {
+      grid-template-columns: 1fr;
+    }
+    .footer__cols {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer__bottom {
+      flex-direction: column;
+    }
+    .footer__note {
+      text-align: left;
+    }
+  }
+</style>

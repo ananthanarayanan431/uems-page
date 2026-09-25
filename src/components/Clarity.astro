@@ -1,0 +1,214 @@
+---
+// Chaos → clarity: fragments of a broken cap table snap into one clean structure.
+const fragments = [
+  { t: 'Founder A', x: 12, y: 22, r: -8 },
+  { t: 'Series A???', x: 68, y: 16, r: 6 },
+  { t: '13.2%', x: 30, y: 62, r: -4, big: true },
+  { t: 'Investor B', x: 78, y: 58, r: 10 },
+  { t: 'ESOP??', x: 18, y: 78, r: 5 },
+  { t: '23%', x: 58, y: 34, r: -12, big: true },
+  { t: 'Investor C', x: 44, y: 84, r: -6 },
+  { t: 'Spreadsheet_v7_FINAL_FINAL.xlsx', x: 36, y: 12, r: 3, file: true },
+  { t: 'cap_table (3).xlsx', x: 70, y: 80, r: -9, file: true },
+  { t: 'Who signed the SHA?', x: 82, y: 36, r: 4 },
+  { t: '7.8%?', x: 8, y: 48, r: 12, big: true },
+  { t: 'Convertible note: terms?', x: 54, y: 66, r: -3 },
+];
+---
+<section class="clr" data-theme="dark" aria-labelledby="clr-title">
+  <div class="clr__pin" data-clr>
+    <div class="clr__chaos" aria-hidden="true">
+      {fragments.map((f) => (
+        <span
+          class:list={['frag', { 'frag--big': f.big, 'frag--file': f.file }]}
+          style={`left:${f.x}%;top:${f.y}%;--r:${f.r}deg`}
+        >{f.t}</span>
+      ))}
+    </div>
+
+    <h2 id="clr-title" class="clr__msg clr__msg--a" data-clr-a>
+      Equity shouldn’t <em class="serif">look like this.</em>
+    </h2>
+
+    <div class="clr__order" data-clr-order>
+      <svg viewBox="0 0 720 300" class="clr__tree" aria-labelledby="clr-tree-title" role="img">
+        <title id="clr-tree-title">A single company owned by founders (52%), investors (38%) and an ESOP pool (10%).</title>
+        <path class="t-line" d="M360 58 V130 M120 130 H600 M120 130 V190 M360 130 V190 M600 130 V190" />
+        <g class="t-node t-root"><rect x="280" y="18" width="160" height="44" rx="22" /><text x="360" y="45">COMPANY</text></g>
+        {[['Founders', '52%', 120], ['Investors', '38%', 360], ['ESOP', '10%', 600]].map(([l, v, x]) => (
+          <g class="t-node">
+            <circle cx={x} cy="198" r="8" />
+            <text x={x} y="240" class="t-lbl">{String(l).toUpperCase()}</text>
+            <text x={x} y="284" class="t-val">{v}</text>
+          </g>
+        ))}
+      </svg>
+      <p class="clr__msg clr__msg--b">Clarity <em class="serif">changes everything.</em></p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { reduced } from '../scripts/site';
+
+  const root = document.querySelector<HTMLElement>('[data-clr]')!;
+  const frags = gsap.utils.toArray<HTMLElement>('.frag');
+
+  if (reduced) {
+    gsap.set('.clr__chaos, [data-clr-a]', { autoAlpha: 0 });
+    gsap.set('[data-clr-order]', { autoAlpha: 1 });
+  } else {
+    // idle drift while chaotic
+    frags.forEach((f, i) => {
+      gsap.to(f, {
+        x: `random(-24, 24)`,
+        y: `random(-18, 18)`,
+        duration: `random(3, 5)`,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: i * 0.1,
+      });
+    });
+
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: root, start: 'top top', end: '+=200%', pin: true, scrub: 0.8 },
+    });
+    tl.from('[data-clr-a]', { y: 40, autoAlpha: 0, duration: 0.6 })
+      .to({}, { duration: 0.6 })
+      .to('[data-clr-a]', { autoAlpha: 0, y: -30, duration: 0.5 })
+      // everything is pulled to the centre and dissolves...
+      .to('.clr__chaos', { scale: 0.2, autoAlpha: 0, rotate: 12, duration: 1.2, ease: 'power3.in' }, '<')
+      // ...and re-forms as one clean structure
+      .fromTo('[data-clr-order]', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 })
+      .fromTo('.t-root', { scale: 0, transformOrigin: '360px 40px' }, { scale: 1, duration: 0.6, ease: 'back.out(2)' })
+      .fromTo('.t-line', { strokeDashoffset: 900 }, { strokeDashoffset: 0, duration: 1, ease: 'power2.inOut' })
+      .fromTo('.t-node:not(.t-root)', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.15 }, '-=0.4')
+      .fromTo('.clr__msg--b', { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.6 })
+      .to({}, { duration: 0.5 });
+  }
+</script>
+
+<style>
+  .clr__pin {
+    position: relative;
+    height: 100svh;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    color: #f5f5f0;
+  }
+  .clr__chaos {
+    position: absolute;
+    inset: 8% 4%;
+  }
+  .frag {
+    position: absolute;
+    transform: rotate(var(--r));
+    translate: -50% -50%;
+    font-family: var(--f-mono);
+    font-size: clamp(12px, 1.2vw, 16px);
+    padding: 8px 14px;
+    border: 1px dashed rgba(245, 245, 240, 0.28);
+    border-radius: 6px;
+    color: rgba(245, 245, 240, 0.72);
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.03);
+  }
+  .frag--big {
+    font-family: var(--f-display);
+    font-size: clamp(30px, 4vw, 64px);
+    font-weight: 600;
+    border: 0;
+    background: none;
+    color: rgba(198, 161, 91, 0.75);
+    letter-spacing: -0.03em;
+  }
+  .frag--file {
+    border-style: solid;
+    border-color: rgba(198, 161, 91, 0.4);
+  }
+  .frag--file::before {
+    content: '▤ ';
+    color: var(--gold);
+  }
+  .clr__msg {
+    font-family: var(--f-serif);
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    text-align: center;
+    font-size: clamp(38px, 6vw, 96px);
+    letter-spacing: -0.025em;
+    line-height: 1.02;
+    font-weight: 400;
+    max-width: 14ch;
+    padding: 0 var(--gutter);
+  }
+  .clr__msg em {
+    color: var(--gold);
+  }
+  .clr__msg--a {
+    text-shadow: 0 0 40px var(--forest), 0 0 80px var(--forest);
+  }
+  .clr__order {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    opacity: 0;
+    visibility: hidden;
+    padding: 0 var(--gutter);
+  }
+  .clr__msg--b {
+    font-size: clamp(32px, 4.4vw, 68px);
+    max-width: none;
+  }
+  .clr__tree {
+    width: min(760px, 100%);
+    overflow: visible;
+  }
+  .t-line {
+    fill: none;
+    stroke: rgba(245, 245, 240, 0.55);
+    stroke-width: 1.4;
+    stroke-dasharray: 900;
+  }
+  .t-root rect {
+    fill: var(--gold);
+  }
+  .t-root text {
+    fill: var(--ink);
+    font-family: var(--f-mono);
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-anchor: middle;
+    font-weight: 500;
+  }
+  .t-node circle {
+    fill: #f5f5f0;
+  }
+  .t-lbl {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    fill: rgba(245, 245, 240, 0.65);
+    text-anchor: middle;
+  }
+  .t-val {
+    font-size: 38px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    fill: #f5f5f0;
+    text-anchor: middle;
+  }
+  @media (max-width: 700px) {
+    .frag:nth-child(n + 9) {
+      display: none;
+    }
+  }
+</style>

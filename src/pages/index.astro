@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Paths from '../components/Paths.astro';
+import Services from '../components/Services.astro';
+import Process from '../components/Process.astro';
+import Industries from '../components/Industries.astro';
+import Clarity from '../components/Clarity.astro';
+import Lifecycle from '../components/Lifecycle.astro';
+import WhyUs from '../components/WhyUs.astro';
+import Faq from '../components/Faq.astro';
+import FinalCta from '../components/FinalCta.astro';
+import NodeDivider from '../components/NodeDivider.astro';
+---
+<Base
+  title="Universal Equity Management Solutions | Modern Equity Management"
+  description="UEMS structures, manages and facilitates equity for businesses in every vertical: equity structuring, capital facilitation, cap-table and ESOP management, and transaction support. Hyderabad · Mumbai · Bangalore."
+>
+  <Hero />
+  <NodeDivider />
+  <Paths />
+  <Services />
+  <Process />
+  <Industries />
+  <Clarity />
+  <Lifecycle />
+  <NodeDivider />
+  <div style="height: clamp(80px, 10vw, 140px)"></div>
+  <WhyUs />
+  <Faq />
+  <FinalCta />
+</Base>

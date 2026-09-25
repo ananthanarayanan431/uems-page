@@ -1,0 +1,687 @@
+---
+// Services as a tabbed ledger: pick a discipline on the left, see exactly what
+// it includes, who it is for, and a live engagement tracker on the right.
+type Status = 'done' | 'active' | 'queued';
+const services: {
+  id: string;
+  t: string;
+  short: string;
+  d: string;
+  includes: string[];
+  bestFor: string;
+  model: string;
+  outcome: string;
+  tracker: { title: string; sub: string; steps: [string, Status][] };
+}[] = [
+  {
+    id: 'structuring',
+    t: 'Equity Structuring',
+    short: 'Frameworks for how ownership should work',
+    d: 'Custom equity frameworks designed around your industry and ownership. Whether it’s an early dilutive investment or a late-stage leveraged buyout structure, we align your equity distribution strategy with institutional standards.',
+    includes: [
+      'Cap-table audit and reconciliation',
+      'Pre- and post-money dilution scenarios',
+      'Share classes and instruments: equity, CCPS, CCDs',
+      'ESOP pool sizing and vesting design',
+      'Liquidation-preference and exit waterfalls',
+    ],
+    bestFor: 'Founders before a round · promoters restructuring',
+    model: 'Project engagement',
+    outcome: 'A recommended equity structure your board can approve',
+    tracker: {
+      title: 'Structuring engagement',
+      sub: 'ABC Manufacturing Pvt Ltd',
+      steps: [
+        ['Cap-table audit', 'done'],
+        ['Dilution scenarios modelled', 'done'],
+        ['Instrument recommendation', 'active'],
+        ['Board presentation', 'queued'],
+      ],
+    },
+  },
+  {
+    id: 'capital',
+    t: 'Capital Facilitation',
+    short: 'Equity transformation that mobilises capital',
+    d: 'We facilitate the equity transformation required to mobilise working capital: preparing the company, coordinating valuation and investors, and creating transparent liquidity pathways for every stakeholder.',
+    includes: [
+      'Fundraise-readiness review',
+      'Valuations by registered valuers and FEMA pricing certificates',
+      'Investor materials and data room',
+      'Term-sheet review with dilution impact',
+      'Buybacks, secondaries and liquidity pathways',
+    ],
+    bestFor: 'Companies raising growth or working capital',
+    model: 'Project engagement',
+    outcome: 'A round that closes with a clean, agreed cap table',
+    tracker: {
+      title: '₹10 Cr growth round',
+      sub: 'Series A · illustrative',
+      steps: [
+        ['Readiness review', 'done'],
+        ['Valuation report', 'done'],
+        ['Data room live', 'active'],
+        ['Term sheet signed', 'queued'],
+        ['Funds received', 'queued'],
+      ],
+    },
+  },
+  {
+    id: 'ownership',
+    t: 'Ownership Management',
+    short: 'One accurate record of who owns what',
+    d: 'A single, reconciled source of truth for your ownership: shareholder records, ESOP administration, funding-round history and clear ownership visualisation for founders, investors and employees.',
+    includes: [
+      'Reconciled cap table and shareholder register',
+      'ESOP grants, vesting and exercise administration',
+      'Round-by-round ownership history',
+      'Investor and stakeholder reporting',
+      'Share dematerialisation under Rule 9B, where applicable',
+    ],
+    bestFor: 'Growing companies with investors or an ESOP',
+    model: 'Ongoing retainer',
+    outcome: 'Ownership that is accurate before anyone asks',
+    tracker: {
+      title: 'ESOP administration',
+      sub: 'FY 2026 · 10% pool',
+      steps: [
+        ['Pool approved by shareholders', 'done'],
+        ['24 grant letters issued', 'done'],
+        ['Vesting schedules synced', 'active'],
+        ['Quarterly investor report', 'queued'],
+      ],
+    },
+  },
+  {
+    id: 'transactions',
+    t: 'Transaction Support',
+    short: 'Hands-on guidance through to closing',
+    d: 'Equity specialists who assist at every stage. We coordinate your CA, CS and legal counsel so documentation, approvals and filings stay aligned with local regulation, and the cap table is updated the day the deal closes.',
+    includes: [
+      'SHA / SSA coordination with legal counsel',
+      'Board and shareholder resolutions',
+      'Allotment filings (PAS-3, MGT-14) with your CS',
+      'FC-GPR reporting for foreign investors',
+      'Post-closing cap-table update',
+    ],
+    bestFor: 'Any company mid-transaction',
+    model: 'Per transaction',
+    outcome: 'A documented, compliant close with no loose ends',
+    tracker: {
+      title: 'Closing checklist',
+      sub: 'Allotment to new investor',
+      steps: [
+        ['Board resolution passed', 'done'],
+        ['SHA executed', 'done'],
+        ['Allotment & PAS-3 filing', 'active'],
+        ['FC-GPR reporting', 'queued'],
+        ['Cap table updated', 'queued'],
+      ],
+    },
+  },
+];
+const label: Record<Status, string> = { done: 'Done', active: 'In progress', queued: 'Queued' };
+---
+<section class="svc" id="services" data-theme="light" aria-labelledby="svc-title">
+  <div class="wrap">
+    <div class="svc__head">
+      <div>
+        <p class="eyebrow" data-fade>Solutions</p>
+        <h2 id="svc-title" class="h-display" data-reveal>
+          <span class="split-line"><span>Four disciplines.</span></span>
+          <span class="split-line"><span><em>One ownership story.</em></span></span>
+        </h2>
+      </div>
+      <p class="lede" data-fade>
+        Engage us for one discipline or all four. Each is scoped up front, with clear deliverables and
+        the right licensed professionals alongside.
+      </p>
+    </div>
+
+    <div class="svc__body" data-svc>
+      <div class="svc__tabs" role="tablist" aria-label="Services" aria-orientation="vertical">
+        {services.map((s, i) => (
+          <button
+            class="tab"
+            role="tab"
+            id={`svc-tab-${s.id}`}
+            aria-controls={`svc-panel-${s.id}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            data-tab={i}
+          >
+            <span class="tab__n">0{i + 1}</span>
+            <span class="tab__text">
+              <span class="tab__t">{s.t}</span>
+              <span class="tab__s">{s.short}</span>
+            </span>
+            <span class="tab__arrow" aria-hidden="true">→</span>
+          </button>
+        ))}
+      </div>
+
+      <div class="svc__panels">
+        {services.map((s, i) => (
+          <article
+            class="panel"
+            role="tabpanel"
+            id={`svc-panel-${s.id}`}
+            aria-labelledby={`svc-tab-${s.id}`}
+            hidden={i !== 0}
+            data-panel={i}
+          >
+            <div class="panel__main">
+              <span class="panel__k">0{i + 1} / 04</span>
+              <h3 class="panel__t">{s.t}</h3>
+              <p class="panel__d">{s.d}</p>
+
+              <p class="panel__label">What’s included</p>
+              <ul class="panel__inc">
+                {s.includes.map((it) => (
+                  <li>
+                    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" /></svg>
+                    {it}
+                  </li>
+                ))}
+              </ul>
+
+              <dl class="panel__meta">
+                <div><dt>Best for</dt><dd>{s.bestFor}</dd></div>
+                <div><dt>Engagement</dt><dd>{s.model}</dd></div>
+                <div><dt>Outcome</dt><dd>{s.outcome}</dd></div>
+              </dl>
+            </div>
+
+            <aside class="track" aria-label={`Example engagement: ${s.tracker.title}`}>
+              <header class="track__head">
+                <span class="track__k">Engagement tracker · example</span>
+                <strong>{s.tracker.title}</strong>
+                <span class="track__sub">{s.tracker.sub}</span>
+              </header>
+              <ol class="track__list">
+                {s.tracker.steps.map(([name, st]) => (
+                  <li class={`step step--${st}`} data-status={st}>
+                    <i class="step__icon" aria-hidden="true"></i>
+                    <span class="step__name">{name}</span>
+                    <span class="step__st">{label[st]}</span>
+                  </li>
+                ))}
+              </ol>
+              <div class="track__bar" aria-hidden="true"><i data-progress></i></div>
+              <a href="/contact" class="track__cta" data-cursor="Explore →">
+                Discuss {s.t.toLowerCase()} <span aria-hidden="true">→</span>
+              </a>
+            </aside>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { reduced } from '../scripts/site';
+
+  const root = document.querySelector<HTMLElement>('[data-svc]')!;
+  const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-tab]'));
+  const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-panel]'));
+  let current = 0;
+
+  function progressOf(p: HTMLElement) {
+    const steps = p.querySelectorAll('[data-status]');
+    const done = p.querySelectorAll('[data-status="done"]').length;
+    const active = p.querySelectorAll('[data-status="active"]').length;
+    return ((done + active * 0.5) / steps.length) * 100;
+  }
+
+  function reveal(p: HTMLElement) {
+    const bar = p.querySelector<HTMLElement>('[data-progress]')!;
+    if (reduced) {
+      bar.style.width = `${progressOf(p)}%`;
+      return;
+    }
+    const tl = gsap.timeline();
+    tl.fromTo(p.querySelector('.panel__main'), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out' })
+      .fromTo(p.querySelectorAll('.panel__inc li'), { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.5, stagger: 0.05, ease: 'expo.out' }, 0.1)
+      .fromTo(p.querySelector('.track'), { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: 'expo.out' }, 0.05)
+      .fromTo(p.querySelectorAll('.step'), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.08, ease: 'power2.out' }, 0.25)
+      .fromTo(bar, { width: '0%' }, { width: `${progressOf(p)}%`, duration: 1.2, ease: 'power3.inOut' }, 0.3);
+  }
+
+  function select(i: number, focus = false) {
+    if (i === current) return;
+    tabs[current].setAttribute('aria-selected', 'false');
+    tabs[current].tabIndex = -1;
+    panels[current].hidden = true;
+    current = i;
+    tabs[i].setAttribute('aria-selected', 'true');
+    tabs[i].tabIndex = 0;
+    panels[i].hidden = false;
+    if (focus) tabs[i].focus({ preventScroll: true });
+    // on phones the tabs are a horizontal strip, so keep the chosen one in view
+    const strip = tabs[i].parentElement!;
+    if (strip.scrollWidth > strip.clientWidth)
+      strip.scrollTo({ left: tabs[i].offsetLeft - strip.offsetLeft - 16, behavior: reduced ? 'auto' : 'smooth' });
+    reveal(panels[i]);
+  }
+
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(i));
+    t.addEventListener('keydown', (e) => {
+      const d = ['ArrowDown', 'ArrowRight'].includes(e.key) ? 1 : ['ArrowUp', 'ArrowLeft'].includes(e.key) ? -1 : 0;
+      if (d) {
+        e.preventDefault();
+        select((i + d + tabs.length) % tabs.length, true);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        select(0, true);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        select(tabs.length - 1, true);
+      }
+    });
+  });
+
+  // First panel animates in when the section is reached
+  if (reduced) reveal(panels[0]);
+  else {
+    gsap.set(panels[0].querySelectorAll('.panel__main, .track'), { opacity: 0 });
+    gsap.to(root, {
+      scrollTrigger: { trigger: root, start: 'top 70%', once: true, onEnter: () => reveal(panels[current]) },
+    });
+  }
+</script>
+
+<style>
+  .svc {
+    padding: clamp(110px, 13vw, 180px) 0;
+  }
+  .svc__head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: end;
+    margin-bottom: clamp(48px, 6vw, 80px);
+  }
+  .svc__head .lede {
+    justify-self: end;
+    max-width: 42ch;
+    margin: 0;
+  }
+  .svc__body {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.72fr) 2fr;
+    gap: clamp(20px, 3vw, 40px);
+    align-items: start;
+  }
+
+  /* ---------- tabs ---------- */
+  .svc__tabs {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--line);
+    position: sticky;
+    top: 110px;
+  }
+  .tab {
+    position: relative;
+    display: grid;
+    grid-template-columns: 34px 1fr 20px;
+    gap: 10px;
+    align-items: start;
+    padding: 22px 6px 22px 0;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+  }
+  .tab::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -1px;
+    height: 2px;
+    width: 100%;
+    background: var(--forest);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s var(--ease);
+  }
+  .tab[aria-selected='true']::before {
+    transform: scaleX(1);
+  }
+  .tab__n {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--gold);
+    padding-top: 7px;
+  }
+  .tab__text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .tab__t {
+    font-family: var(--f-serif);
+    font-size: clamp(22px, 1.9vw, 28px);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: rgba(23, 32, 29, 0.46);
+    transition: color 0.35s;
+  }
+  .tab__s {
+    font-size: 13.5px;
+    color: rgba(23, 32, 29, 0.46);
+    transition: color 0.35s;
+  }
+  .tab:hover .tab__t,
+  .tab[aria-selected='true'] .tab__t {
+    color: var(--forest);
+  }
+  .tab[aria-selected='true'] .tab__s {
+    color: var(--ink-60);
+  }
+  .tab__arrow {
+    padding-top: 6px;
+    color: var(--forest);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.35s, transform 0.5s var(--ease);
+  }
+  .tab[aria-selected='true'] .tab__arrow {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ---------- panel ---------- */
+  .panel {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: clamp(24px, 3vw, 44px);
+    padding: clamp(26px, 3vw, 44px);
+    border-radius: 26px;
+    background: var(--white);
+    border: 1px solid var(--line);
+  }
+  .panel[hidden] {
+    display: none;
+  }
+  .panel__k {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+  }
+  .panel__t {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(32px, 3.2vw, 48px);
+    letter-spacing: -0.025em;
+    line-height: 1.02;
+    color: var(--forest);
+    margin: 12px 0 16px;
+  }
+  .panel__d {
+    margin: 0 0 28px;
+    color: var(--ink-60);
+    font-size: 16px;
+  }
+  .panel__label {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+    margin: 0 0 12px;
+  }
+  .panel__inc {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .panel__inc li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 15.5px;
+    line-height: 1.4;
+  }
+  .panel__inc svg {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    padding: 3px;
+    margin-top: 0;
+    border-radius: 50%;
+    background: rgba(11, 122, 90, 0.1);
+    fill: none;
+    stroke: var(--emerald);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .panel__meta {
+    margin: 30px 0 0;
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  .panel__meta div {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 14.5px;
+  }
+  .panel__meta dt {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+    padding-top: 3px;
+  }
+  .panel__meta dd {
+    margin: 0;
+  }
+
+  /* ---------- tracker ---------- */
+  .track {
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    border-radius: 20px;
+    background: var(--forest);
+    color: #f5f5f0;
+  }
+  .track__k {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(245, 245, 240, 0.55);
+  }
+  .track__head {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(245, 245, 240, 0.14);
+  }
+  .track__head strong {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-top: 6px;
+  }
+  .track__sub {
+    font-size: 13px;
+    color: rgba(245, 245, 240, 0.6);
+  }
+  .track__list {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px dashed rgba(245, 245, 240, 0.12);
+    font-size: 14.5px;
+  }
+  .step:last-child {
+    border-bottom: 0;
+  }
+  .step__icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(245, 245, 240, 0.35);
+    position: relative;
+  }
+  .step--done .step__icon {
+    background: var(--emerald-soft);
+    border-color: var(--emerald-soft);
+  }
+  .step--done .step__icon::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid var(--forest);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .step--active .step__icon {
+    border-color: var(--gold);
+  }
+  .step--active .step__icon::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    50% {
+      transform: scale(0.55);
+      opacity: 0.5;
+    }
+  }
+  .step--queued .step__name {
+    color: rgba(245, 245, 240, 0.55);
+  }
+  .step__st {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+  .step--done .step__st {
+    background: rgba(63, 174, 138, 0.18);
+    color: #8fd9bd;
+  }
+  .step--active .step__st {
+    background: rgba(198, 161, 91, 0.2);
+    color: var(--gold-soft);
+  }
+  .step--queued .step__st {
+    background: rgba(245, 245, 240, 0.08);
+    color: rgba(245, 245, 240, 0.5);
+  }
+  .track__bar {
+    height: 4px;
+    border-radius: 99px;
+    background: rgba(245, 245, 240, 0.12);
+    margin: 16px 0 18px;
+    overflow: hidden;
+  }
+  .track__bar i {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--emerald-soft), var(--gold));
+  }
+  .track__cta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(245, 245, 240, 0.08);
+    font-size: 14px;
+    transition: background 0.3s, color 0.3s;
+  }
+  .track__cta:hover {
+    background: var(--gold);
+    color: var(--ink);
+  }
+
+  @media (max-width: 1100px) {
+    .panel {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 860px) {
+    .svc__head {
+      grid-template-columns: 1fr;
+    }
+    .svc__head .lede {
+      justify-self: start;
+    }
+    .svc__body {
+      grid-template-columns: 1fr;
+    }
+    .svc__tabs {
+      position: static;
+      flex-direction: row;
+      overflow-x: auto;
+      border-top: 0;
+      gap: 8px;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .tab {
+      flex: none;
+      display: block;
+      padding: 10px 16px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+    }
+    .tab::before,
+    .tab__n,
+    .tab__s,
+    .tab__arrow {
+      display: none;
+    }
+    .tab__t {
+      font-size: 17px;
+    }
+    .tab[aria-selected='true'] {
+      background: var(--forest);
+      border-color: var(--forest);
+    }
+    .tab[aria-selected='true'] .tab__t {
+      color: var(--ivory);
+    }
+    .panel__meta div {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+</style>

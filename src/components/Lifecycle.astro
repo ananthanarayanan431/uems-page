@@ -1,0 +1,184 @@
+---
+// Equity isn't a one-time event: a line that draws itself across the company lifecycle.
+const stages = [
+  'Company formation',
+  'Founder equity',
+  'ESOP',
+  'Angel / Seed',
+  'Series A / B',
+  'Secondary transactions',
+  'PE investment',
+  'Buyout / IPO readiness',
+];
+---
+<section class="life" data-theme="light" aria-labelledby="life-title">
+  <div class="wrap">
+    <div class="life__head">
+      <p class="eyebrow" data-fade>Across the lifecycle</p>
+      <h2 id="life-title" class="life__title" data-reveal>
+        <span class="split-line"><span>Not a single round.</span></span>
+        <span class="split-line"><span><em class="serif">Every stage of ownership.</em></span></span>
+      </h2>
+    </div>
+
+    <ol class="life__track" data-life>
+      <span class="life__rail" aria-hidden="true"><i data-life-fill></i></span>
+      {stages.map((s, i) => (
+        <li class="life__stop" data-stop>
+          <span class="life__n">{String(i + 1).padStart(2, '0')}</span>
+          <i class="life__dot" aria-hidden="true"></i>
+          <span class="life__name">{s}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { reduced } from '../scripts/site';
+
+  const stops = gsap.utils.toArray<HTMLElement>('[data-stop]');
+  if (reduced) {
+    stops.forEach((s) => s.classList.add('is-on'));
+    gsap.set('[data-life-fill]', { scaleX: 1, scaleY: 1 });
+  } else {
+    gsap.fromTo(
+      '[data-life-fill]',
+      { scaleX: 0, scaleY: 0 },
+      {
+        scaleX: 1,
+        scaleY: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '[data-life]',
+          start: 'top 70%',
+          end: 'bottom 45%',
+          scrub: true,
+          onUpdate: (self) => {
+            stops.forEach((s, i) => s.classList.toggle('is-on', self.progress >= i / (stops.length - 1) - 0.02));
+          },
+        },
+      },
+    );
+  }
+</script>
+
+<style>
+  .life {
+    padding: clamp(120px, 14vw, 200px) 0;
+  }
+  .life__title {
+    font-family: var(--f-serif);
+    font-size: clamp(40px, 5.6vw, 92px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    font-weight: 400;
+    margin: 24px 0 0;
+    color: var(--forest);
+  }
+  .life__title em {
+    color: var(--emerald);
+  }
+  .life__track {
+    position: relative;
+    list-style: none;
+    padding: 0;
+    margin: clamp(60px, 8vw, 110px) 0 0;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+  }
+  .life__rail {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 47px;
+    height: 1px;
+    background: var(--rule);
+  }
+  .life__rail i {
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    height: 2px;
+    top: -0.5px;
+    transform-origin: left;
+  }
+  .life__stop {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-right: 12px;
+  }
+  .life__n {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--fg-muted);
+    letter-spacing: 0.1em;
+  }
+  .life__dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--ivory);
+    border: 1.5px solid var(--ink-30);
+    transition: background 0.4s, border-color 0.4s, transform 0.6s var(--ease);
+    position: relative;
+    z-index: 1;
+  }
+  .life__name {
+    font-size: clamp(15px, 1.3vw, 19px);
+    letter-spacing: -0.015em;
+    font-weight: 500;
+    color: var(--ink-30);
+    transition: color 0.4s;
+    max-width: 12ch;
+  }
+  .life__stop.is-on .life__dot {
+    background: var(--forest);
+    border-color: var(--forest);
+    transform: scale(1.2);
+  }
+  .life__stop:last-child.is-on .life__dot {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .life__stop.is-on .life__name {
+    color: var(--forest);
+  }
+  @media (max-width: 900px) {
+    .life__track {
+      grid-template-columns: 1fr;
+      gap: 26px;
+      padding-left: 8px;
+    }
+    .life__rail {
+      top: 0;
+      bottom: 0;
+      left: 15px;
+      right: auto;
+      width: 1px;
+      height: auto;
+    }
+    .life__rail i {
+      width: 2px;
+      height: 100%;
+      top: 0;
+      left: -0.5px;
+      transform-origin: top;
+    }
+    .life__stop {
+      flex-direction: row;
+      align-items: center;
+      gap: 18px;
+    }
+    .life__n {
+      order: 3;
+      margin-left: auto;
+    }
+    .life__name {
+      max-width: none;
+    }
+  }
+</style>

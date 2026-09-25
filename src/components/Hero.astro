@@ -1,0 +1,475 @@
+---
+// Hero: editorial headline + a live cap-table card that shows the service
+// (ownership before and after an equity round) instead of decorating around it.
+const holders = [
+  { k: 'a', name: 'Founder A', before: 60, after: 48 },
+  { k: 'b', name: 'Founder B', before: 40, after: 32 },
+  { k: 'c', name: 'Growth investor', before: 0, after: 20 },
+];
+---
+<section class="hero" data-theme="light" aria-labelledby="hero-title">
+  <svg class="hero__motif" viewBox="0 0 600 600" aria-hidden="true">
+    <g fill="none" stroke="currentColor" stroke-width="1">
+      <path d="M300 60 L540 300 L300 540 L60 300 Z" />
+      <path d="M300 60 V540 M60 300 H540" opacity=".5" />
+      <circle cx="300" cy="300" r="170" stroke-dasharray="2 7" />
+    </g>
+    <g fill="currentColor">
+      <circle cx="300" cy="60" r="5" /><circle cx="540" cy="300" r="5" />
+      <circle cx="300" cy="540" r="5" /><circle cx="60" cy="300" r="5" />
+    </g>
+  </svg>
+
+  <div class="wrap hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow" data-hero-in>Equity advisory · Cap-table management · Capital facilitation</p>
+
+      <h1 id="hero-title" class="hero__title">
+        <span class="split-line"><span>Modern equity management,</span></span>
+        <span class="split-line"><span><em>simplified</em> for every</span></span>
+        <span class="split-line"><span>business vertical.</span></span>
+      </h1>
+
+      <p class="hero__sub" data-hero-in>
+        Streamline capitalization &amp; equity facilitation. Universal Equity Management Solutions
+        structures, manages and facilitates ownership for founders, promoters and investors, from the
+        first cap table to growth capital and exit.
+      </p>
+
+      <div class="hero__ctas" data-hero-in>
+        <a href="/contact" class="btn" data-cursor="Explore →">
+          Request a Consultation <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="#paths" class="btn btn--ghost" data-cursor="Explore ↓">View Solutions</a>
+      </div>
+
+      <ul class="hero__trust" data-hero-in>
+        <li><b>Custom frameworks</b><span>Built for your industry and owners</span></li>
+        <li><b>Local regulatory alignment</b><span>Companies Act, FEMA &amp; SEBI aware</span></li>
+        <li><b>Hyderabad · Mumbai · Bangalore</b><span>Equity specialists, hands-on</span></li>
+      </ul>
+    </div>
+
+    <!-- live cap table -->
+    <figure class="ct-card" data-ctcard data-state="before" aria-label="Illustrative cap table before and after a ₹10 crore equity round">
+      <header class="ct-card__head">
+        <div>
+          <span class="ct-card__k">Cap table · illustrative</span>
+          <strong>ABC Manufacturing Pvt Ltd</strong>
+        </div>
+        <div class="ct-toggle" role="tablist" aria-label="Cap table state">
+          <button role="tab" aria-selected="true" data-to="before">Today</button>
+          <button role="tab" aria-selected="false" data-to="after">After ₹10 Cr round</button>
+          <i class="ct-toggle__pill" aria-hidden="true"></i>
+        </div>
+      </header>
+
+      <div class="ct-stack" aria-hidden="true">
+        {holders.map((h) => <i class={`seg seg--${h.k}`} data-seg={h.k} style={`width:${h.before}%`}></i>)}
+      </div>
+
+      <table class="ct-table">
+        <thead>
+          <tr><th scope="col">Shareholder</th><th scope="col">Ownership</th></tr>
+        </thead>
+        <tbody>
+          {holders.map((h) => (
+            <tr data-row={h.k}>
+              <th scope="row"><span class="who"><i class={`dot dot--${h.k}`}></i>{h.name}</span></th>
+              <td data-pct={h.k} data-before={h.before} data-after={h.after}>{h.before}%</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <footer class="ct-card__foot">
+        <div><span>Valuation</span><strong data-val>₹40 Cr pre-money</strong></div>
+        <div><span>Capital mobilised</span><strong class="gold" data-hero-cap>₹0</strong></div>
+      </footer>
+
+      <span class="ct-chip" data-chip aria-hidden="true">+ ₹10 Cr growth capital</span>
+    </figure>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { reduced, pageReady } from '../scripts/site';
+
+  const card = document.querySelector<HTMLElement>('[data-ctcard]')!;
+  const tabs = card.querySelectorAll<HTMLButtonElement>('[data-to]');
+  const pill = card.querySelector<HTMLElement>('.ct-toggle__pill')!;
+  const cells = card.querySelectorAll<HTMLElement>('[data-pct]');
+  let state: 'before' | 'after' = 'before';
+  let userTouched = false;
+
+  function placePill() {
+    const active = card.querySelector<HTMLButtonElement>(`[data-to="${state}"]`)!;
+    gsap.to(pill, {
+      x: active.offsetLeft - 4,
+      width: active.offsetWidth,
+      duration: reduced ? 0 : 0.5,
+      ease: 'expo.out',
+    });
+  }
+
+  function show(next: 'before' | 'after') {
+    state = next;
+    card.dataset.state = next;
+    tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.to === next)));
+    placePill();
+    const d = reduced ? 0 : 1.1;
+    cells.forEach((c) => {
+      const k = c.dataset.pct!;
+      const target = Number(next === 'after' ? c.dataset.after : c.dataset.before);
+      const o = { v: parseFloat(c.textContent || '0') };
+      gsap.to(o, { v: target, duration: d, ease: 'power3.inOut', onUpdate: () => (c.textContent = `${Math.round(o.v)}%`) });
+      gsap.to(card.querySelector(`[data-seg="${k}"]`), { width: `${target}%`, duration: d, ease: 'power3.inOut' });
+    });
+    const cap = { v: next === 'after' ? 0 : 10 };
+    const capEl = card.querySelector<HTMLElement>('[data-hero-cap]')!;
+    gsap.to(cap, {
+      v: next === 'after' ? 10 : 0,
+      duration: d,
+      ease: 'power2.out',
+      onUpdate: () => {
+        const v = Math.floor(cap.v / 2.5 + 0.001) * 2.5;
+        capEl.textContent = v ? `₹${v} Cr` : '₹0';
+      },
+    });
+    card.querySelector('[data-val]')!.textContent = next === 'after' ? '₹50 Cr post-money' : '₹40 Cr pre-money';
+    gsap.to(card.querySelector('[data-chip]'), {
+      autoAlpha: next === 'after' ? 1 : 0,
+      y: next === 'after' ? 0 : 10,
+      duration: reduced ? 0 : 0.5,
+    });
+  }
+
+  tabs.forEach((t) =>
+    t.addEventListener('click', () => {
+      userTouched = true;
+      show(t.dataset.to as 'before' | 'after');
+    }),
+  );
+  window.addEventListener('resize', placePill);
+  gsap.set('[data-chip]', { autoAlpha: 0, y: 10 });
+  placePill();
+
+  // Gently demonstrate the round until the visitor takes over.
+  if (!reduced) {
+    let timer = 0;
+    const cycle = () => {
+      if (userTouched) return;
+      show(state === 'before' ? 'after' : 'before');
+      timer = window.setTimeout(cycle, state === 'after' ? 4200 : 2800);
+    };
+    new IntersectionObserver(([e]) => {
+      clearTimeout(timer);
+      if (e.isIntersecting && !userTouched) timer = window.setTimeout(cycle, 1800);
+    }).observe(card);
+
+    const tl = gsap.timeline({ paused: true });
+    tl.from('.hero__title .split-line > span', { yPercent: 110, duration: 1.2, stagger: 0.09, ease: 'expo.out' })
+      .from('[data-hero-in]', { y: 20, opacity: 0, duration: 0.9, stagger: 0.08, ease: 'expo.out' }, 0.35)
+      .from(card, { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out' }, 0.25)
+      .from('.hero__motif', { opacity: 0, scale: 0.9, rotate: -20, duration: 1.8, ease: 'expo.out' }, 0.2);
+    pageReady.then(() => tl.play());
+
+    gsap.to('.hero__motif', {
+      rotate: 30,
+      ease: 'none',
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true },
+    });
+  } else {
+    show('after');
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding: 140px 0 80px;
+    overflow: hidden;
+  }
+  .hero__motif {
+    position: absolute;
+    width: min(62vw, 900px);
+    right: -12vw;
+    top: 50%;
+    margin-top: calc(min(62vw, 900px) / -2);
+    color: var(--forest);
+    opacity: 0.09;
+    pointer-events: none;
+  }
+  .hero__grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr;
+    gap: clamp(40px, 5vw, 88px);
+    align-items: center;
+  }
+  .hero__title {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(36px, 4.4vw, 70px);
+    line-height: 1.03;
+    letter-spacing: -0.025em;
+    color: var(--forest);
+    margin: 22px 0 26px;
+  }
+  .hero__title em {
+    font-style: italic;
+    color: var(--emerald);
+  }
+  .hero__sub {
+    margin: 0 0 34px;
+    font-size: clamp(17px, 1.3vw, 19px);
+    line-height: 1.6;
+    color: var(--ink-60);
+    max-width: 52ch;
+  }
+  .hero__ctas {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .hero__trust {
+    list-style: none;
+    padding: 26px 0 0;
+    margin: 48px 0 0;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .hero__trust li {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13.5px;
+    line-height: 1.4;
+  }
+  .hero__trust b {
+    font-weight: 600;
+    color: var(--forest);
+  }
+  .hero__trust span {
+    color: var(--ink-60);
+  }
+
+  /* ---------- cap-table card ---------- */
+  .ct-card {
+    position: relative;
+    margin: 0;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 26px 26px 22px;
+    box-shadow: 0 1px 0 rgba(23, 32, 29, 0.04), 0 30px 60px -30px rgba(7, 61, 50, 0.28);
+  }
+  .ct-card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .ct-card__k {
+    display: block;
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+    margin-bottom: 6px;
+  }
+  .ct-card__head strong {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .ct-toggle {
+    position: relative;
+    display: inline-flex;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--ivory);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .ct-toggle button {
+    position: relative;
+    z-index: 1;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 999px;
+    color: var(--ink-60);
+    transition: color 0.3s;
+    white-space: nowrap;
+  }
+  .ct-toggle button[aria-selected='true'] {
+    color: var(--ivory);
+  }
+  .ct-toggle__pill {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    bottom: 4px;
+    width: 0;
+    border-radius: 999px;
+    background: var(--forest);
+  }
+  .ct-stack {
+    display: flex;
+    height: 14px;
+    border-radius: 99px;
+    overflow: hidden;
+    margin: 28px 0 8px;
+    background: var(--ivory);
+    gap: 3px;
+  }
+  .seg {
+    display: block;
+    height: 100%;
+    min-width: 0;
+  }
+  .seg--a {
+    background: var(--forest);
+  }
+  .seg--b {
+    background: var(--emerald-soft);
+  }
+  .seg--c {
+    background: var(--gold);
+  }
+  .ct-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 15px;
+  }
+  .ct-table th,
+  .ct-table td {
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    font-weight: 400;
+  }
+  .ct-table thead th {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+    padding-top: 6px;
+  }
+  .ct-table td,
+  .ct-table thead th:last-child {
+    text-align: right;
+  }
+  .ct-table td {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    font-size: 17px;
+  }
+  .who {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex: none;
+  }
+  .dot--a {
+    background: var(--forest);
+  }
+  .dot--b {
+    background: var(--emerald-soft);
+  }
+  .dot--c {
+    background: var(--gold);
+  }
+  [data-state='before'] [data-row='c'] {
+    color: var(--ink-30);
+  }
+  [data-row] {
+    transition: color 0.5s;
+  }
+  .ct-card__foot {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .ct-card__foot div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: var(--ivory);
+  }
+  .ct-card__foot span {
+    font-size: 12px;
+    color: var(--ink-60);
+  }
+  .ct-card__foot strong {
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    color: var(--forest);
+    font-variant-numeric: tabular-nums;
+  }
+  .ct-card__foot .gold {
+    color: #9a7735;
+  }
+  .ct-chip {
+    position: absolute;
+    right: 26px;
+    top: -18px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 14px 30px -14px rgba(120, 90, 30, 0.6);
+  }
+
+  @media (max-width: 980px) {
+    .hero {
+      padding-top: 120px;
+    }
+    .hero__grid {
+      grid-template-columns: 1fr;
+    }
+    .hero__motif {
+      width: 120vw;
+      right: -50vw;
+      margin-top: -60vw;
+    }
+  }
+  @media (max-width: 600px) {
+    .hero__trust {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .ct-card {
+      padding: 20px 18px 18px;
+    }
+    .ct-toggle button {
+      padding: 7px 11px;
+      font-size: 12px;
+    }
+    .ct-chip {
+      right: 14px;
+    }
+  }
+</style>
