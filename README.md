@@ -9,6 +9,9 @@ npm run build     # static output in dist/
 npm run preview
 ```
 
+## Content
+All copy lives in `src/content/*.json` (validated by `src/content.config.ts`); see `src/content/README.md`. Components read it through `src/lib/content.ts`.
+
 ## Pages
 - `/`: home: hero cap table, paths, equity story, services, process, industries, FAQ
 - `/about`: story, operating model, values

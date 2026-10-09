@@ -1,0 +1,29 @@
+{
+  "eyebrow": "How an engagement works",
+  "title": ["Structure.", "*Facilitate.*", "Grow."],
+  "lede": "One team owns the process end to end, so founders stay focused on the business, not the paperwork.",
+  "stepLabel": "Step",
+  "outcomeLabel": "Outcome",
+  "steps": [
+    {
+      "title": "Diagnose",
+      "text": "A 15-minute introductory session, then a review of your current ownership, instruments, agreements and capital requirement.",
+      "outcome": "Ownership & capital diagnostic"
+    },
+    {
+      "title": "Structure",
+      "text": "A custom equity framework: valuation scenarios, dilution modelling, share classes and instruments aligned to institutional standards.",
+      "outcome": "Recommended equity structure"
+    },
+    {
+      "title": "Facilitate",
+      "text": "We coordinate your CA, CS, legal counsel, registered valuers and investors through documentation, approvals and filings.",
+      "outcome": "A closed, documented transaction"
+    },
+    {
+      "title": "Manage",
+      "text": "Ongoing cap-table maintenance, ESOP administration and clear ownership reporting for every stakeholder.",
+      "outcome": "One accurate source of truth"
+    }
+  ]
+}

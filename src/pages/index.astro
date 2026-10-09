@@ -1,4 +1,5 @@
 ---
+import { content } from '../lib/content';
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import Paths from '../components/Paths.astro';
@@ -11,11 +12,9 @@ import WhyUs from '../components/WhyUs.astro';
 import Faq from '../components/Faq.astro';
 import FinalCta from '../components/FinalCta.astro';
 import NodeDivider from '../components/NodeDivider.astro';
+const { seo } = await content('home');
 ---
-<Base
-  title="Universal Equity Management Solutions | Modern Equity Management"
-  description="UEMS structures, manages and facilitates equity for businesses in every vertical: equity structuring, capital facilitation, cap-table and ESOP management, and transaction support. Hyderabad · Mumbai · Bangalore."
->
+<Base title={seo.title} description={seo.description}>
   <Hero />
   <NodeDivider />
   <Paths />

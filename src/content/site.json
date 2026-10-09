@@ -1,0 +1,23 @@
+{
+  "name": "Universal Equity Management Solutions",
+  "shortName": "UEMS",
+  "email": "contact@yourfirm.com",
+  "phone": { "display": "+1 (800) 555-0199", "href": "tel:+18005550199" },
+  "offices": ["Hyderabad", "Mumbai", "Bangalore"],
+  "nav": [
+    { "href": "/#services", "label": "Solutions" },
+    { "href": "/#industries", "label": "Industries" },
+    { "href": "/about", "label": "About" }
+  ],
+  "navCta": "Request a Consultation",
+  "contactLabel": "Contact",
+  "skipLabel": "Skip to content",
+  "menuLabel": "Menu",
+  "footer": {
+    "brandLines": ["Universal Equity", "Management Solutions"],
+    "exploreTitle": "Explore",
+    "reachTitle": "Reach us",
+    "officesTitle": "Offices",
+    "note": "UEMS provides equity advisory, administration and transaction coordination. Activities requiring regulatory registration are carried out with appropriately licensed professionals and intermediaries."
+  }
+}

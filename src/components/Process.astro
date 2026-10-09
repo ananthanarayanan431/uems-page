@@ -1,52 +1,28 @@
 ---
 // How an engagement runs: end-to-end process ownership, in four steps.
-const steps = [
-  {
-    t: 'Diagnose',
-    d: 'A 15-minute introductory session, then a review of your current ownership, instruments, agreements and capital requirement.',
-    out: 'Ownership & capital diagnostic',
-  },
-  {
-    t: 'Structure',
-    d: 'A custom equity framework: valuation scenarios, dilution modelling, share classes and instruments aligned to institutional standards.',
-    out: 'Recommended equity structure',
-  },
-  {
-    t: 'Facilitate',
-    d: 'We coordinate your CA, CS, legal counsel, registered valuers and investors through documentation, approvals and filings.',
-    out: 'A closed, documented transaction',
-  },
-  {
-    t: 'Manage',
-    d: 'Ongoing cap-table maintenance, ESOP administration and clear ownership reporting for every stakeholder.',
-    out: 'One accurate source of truth',
-  },
-];
+import { content, rich } from '../lib/content';
+
+const c = await content('process');
 ---
 <section class="proc" data-theme="pale" aria-labelledby="proc-title">
   <div class="wrap proc__grid">
     <div class="proc__intro">
-      <p class="eyebrow" data-fade>How an engagement works</p>
+      <p class="eyebrow" data-fade>{c.eyebrow}</p>
       <h2 id="proc-title" class="h-display" data-reveal>
-        <span class="split-line"><span>Structure.</span></span>
-        <span class="split-line"><span><em>Facilitate.</em></span></span>
-        <span class="split-line"><span>Grow.</span></span>
+        {c.title.map((l) => <span class="split-line"><span>{rich(l).map((p) => (p.em ? <em>{p.text}</em> : p.text))}</span></span>)}
       </h2>
-      <p class="lede" data-fade>
-        One team owns the process end to end, so founders stay focused on the business, not the
-        paperwork.
-      </p>
+      <p class="lede" data-fade>{c.lede}</p>
     </div>
 
     <ol class="proc__list" data-proc>
       <span class="proc__rail" aria-hidden="true"><i data-proc-fill></i></span>
-      {steps.map((s, i) => (
+      {c.steps.map((s, i) => (
         <li class="step" data-step>
           <span class="step__node" aria-hidden="true"></span>
-          <span class="step__n">Step 0{i + 1}</span>
-          <h3>{s.t}</h3>
-          <p>{s.d}</p>
-          <span class="step__out"><b>Outcome</b>{s.out}</span>
+          <span class="step__n">{c.stepLabel} {String(i + 1).padStart(2, '0')}</span>
+          <h3>{s.title}</h3>
+          <p>{s.text}</p>
+          <span class="step__out"><b>{c.outcomeLabel}</b>{s.outcome}</span>
         </li>
       ))}
     </ol>

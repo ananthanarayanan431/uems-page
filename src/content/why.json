@@ -1,0 +1,26 @@
+{
+  "eyebrow": "Why organisations choose us",
+  "title": ["Precision is", "*the product.*"],
+  "items": [
+    {
+      "title": "Custom frameworks",
+      "text": "Equity structures tailored to tech startups, manufacturing enterprises, founders and investors. Never a template."
+    },
+    {
+      "title": "Local regulatory alignment",
+      "text": "Structures designed around Indian corporate and securities regulation, executed alongside the right licensed professionals."
+    },
+    {
+      "title": "Specialists, hands-on",
+      "text": "Equity specialists who assist at every stage of your requirements, from first cap table to complex secondary."
+    },
+    {
+      "title": "Zero-error discipline",
+      "text": "Reconciled records and rigorous review eliminate the human errors that fragmented spreadsheets invite."
+    },
+    {
+      "title": "Dedicated human support",
+      "text": "A named team that guides complex transactions personally, not a ticket queue."
+    }
+  ]
+}

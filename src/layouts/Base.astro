@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Logo from '../components/Logo.astro';
+import { content } from '../lib/content';
 
 interface Props {
   title: string;
@@ -8,11 +9,8 @@ interface Props {
 }
 const { title, description } = Astro.props;
 const path = Astro.url.pathname;
-const nav = [
-  { href: '/#services', label: 'Solutions' },
-  { href: '/#industries', label: 'Industries' },
-  { href: '/about', label: 'About' },
-];
+const site = await content('site');
+const nav = site.nav;
 ---
 <!doctype html>
 <html lang="en">
@@ -34,7 +32,7 @@ const nav = [
     />
   </head>
   <body>
-    <a class="skip" href="#main">Skip to content</a>
+    <a class="skip" href="#main">{site.skipLabel}</a>
 
     <!-- Loader + page transition: the equity-node mark assembles, then lifts -->
     <div class="curtain" aria-hidden="true" data-curtain>
@@ -47,14 +45,14 @@ const nav = [
         <circle class="c-node" cx="12" cy="60" r="6" />
         <circle class="c-hub" cx="60" cy="60" r="10" />
       </svg>
-      <span class="curtain__word">Universal Equity Management Solutions</span>
+      <span class="curtain__word">{site.name}</span>
     </div>
 
     <header class="nav" data-nav>
       <div class="nav__inner">
-        <a href="/" class="nav__brand" aria-label="Universal Equity Management Solutions, home">
+        <a href="/" class="nav__brand" aria-label={`${site.name}, home`}>
           <Logo size={30} />
-          <span class="nav__word">UEMS</span>
+          <span class="nav__word">{site.shortName}</span>
         </a>
         <nav class="nav__links" aria-label="Primary">
           {nav.map((n) => (
@@ -62,10 +60,10 @@ const nav = [
           ))}
         </nav>
         <a href="/contact" class="nav__cta" data-cursor="Explore →">
-          Request a Consultation <span aria-hidden="true">→</span>
+          {site.navCta} <span aria-hidden="true">→</span>
         </a>
         <button class="nav__toggle" aria-expanded="false" aria-controls="menu" data-menu-toggle>
-          <span></span><span></span><span class="sr">Menu</span>
+          <span></span><span></span><span class="sr">{site.menuLabel}</span>
         </button>
       </div>
     </header>
@@ -75,9 +73,9 @@ const nav = [
         {nav.map((n, i) => (
           <a href={n.href} data-menu-link><small>0{i + 1}</small>{n.label}</a>
         ))}
-        <a href="/contact" data-menu-link><small>0{nav.length + 1}</small>Contact</a>
+        <a href="/contact" data-menu-link><small>0{nav.length + 1}</small>{site.contactLabel}</a>
       </nav>
-      <p class="menu__foot">Hyderabad · Mumbai · Bangalore</p>
+      <p class="menu__foot">{site.offices.join(' · ')}</p>
     </div>
 
 
@@ -91,37 +89,31 @@ const nav = [
         <div class="footer__top">
           <div class="footer__brand">
             <Logo size={44} />
-            <p class="display footer__name">Universal Equity<br />Management Solutions</p>
+            <p class="display footer__name">
+              {site.footer.brandLines.map((l, i) => (<>{i > 0 && <br />}{l}</>))}
+            </p>
           </div>
           <div class="footer__cols">
             <div>
-              <p class="eyebrow">Explore</p>
-              <a href="/#services">Solutions</a>
-              <a href="/#industries">Industries</a>
-              <a href="/about">About</a>
-              <a href="/contact">Contact</a>
+              <p class="eyebrow">{site.footer.exploreTitle}</p>
+              {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+              <a href="/contact">{site.contactLabel}</a>
             </div>
             <div>
-              <p class="eyebrow">Reach us</p>
-              <a href="mailto:contact@yourfirm.com">contact@yourfirm.com</a>
-              <a href="tel:+18005550199">+1 (800) 555-0199</a>
+              <p class="eyebrow">{site.footer.reachTitle}</p>
+              <a href={`mailto:${site.email}`}>{site.email}</a>
+              <a href={site.phone.href}>{site.phone.display}</a>
             </div>
             <div>
-              <p class="eyebrow">Offices</p>
-              <span>Hyderabad</span>
-              <span>Mumbai</span>
-              <span>Bangalore</span>
+              <p class="eyebrow">{site.footer.officesTitle}</p>
+              {site.offices.map((o) => <span>{o}</span>)}
             </div>
           </div>
         </div>
         <hr class="rule" />
         <div class="footer__bottom">
-          <span>© {new Date().getFullYear()} Universal Equity Management Solutions</span>
-          <span class="footer__note">
-            UEMS provides equity advisory, administration and transaction coordination. Activities
-            requiring regulatory registration are carried out with appropriately licensed
-            professionals and intermediaries.
-          </span>
+          <span>© {new Date().getFullYear()} {site.name}</span>
+          <span class="footer__note">{site.footer.note}</span>
         </div>
       </div>
     </footer>

@@ -1,0 +1,57 @@
+{
+  "seo": {
+    "title": "About | Universal Equity Management Solutions",
+    "description": "UEMS bridges complex legal frameworks and seamless equity administration for companies of every scale and industry."
+  },
+  "eyebrow": "About UEMS",
+  "title": ["Empowering businesses", "with transparent,", "compliant *equity solutions.*"],
+  "lede": "We bridge the gap between complex legal frameworks and seamless equity administration for companies of every scale and industry.",
+  "story": {
+    "eyebrow": "Our story & mission",
+    "big": "Managing equity shouldn’t be a web of fragmented spreadsheets, compliance risk and administrative friction.",
+    "paragraphA": "Founded by industry experts in corporate finance and venture governance, UEMS was built to turn equity management into a strategic advantage, not an afterthought.",
+    "missionLabel": "Our mission",
+    "missionText": "is to help founders and investors navigate capitalisation with confidence: the right structure, the right records, and the right people around every transaction."
+  },
+  "model": {
+    "eyebrow": "How we work",
+    "title": ["Three layers,", "*one lifecycle.*"],
+    "steps": [
+      { "title": "Equity Advisory", "text": "Capital-structure strategy, valuation scenarios, dilution and restructuring." },
+      { "title": "Equity Management", "text": "Cap tables, shareholder records, ESOPs, round history and investor reporting." },
+      { "title": "Transaction Facilitation", "text": "Coordinating CA, CS, legal counsel, valuers and regulated intermediaries where required." }
+    ]
+  },
+  "agnostic": {
+    "eyebrow": "Industry-agnostic equity management",
+    "title": "Equity structure is the backbone of your ownership governance.",
+    "lede": "Our facilitation service creates transparent liquidity pathways for all stakeholders, whatever you build.",
+    "verticals": ["High-growth SaaS", "Asset-heavy manufacturing", "Multi-entity healthcare", "Franchise retail chains"]
+  },
+  "values": {
+    "eyebrow": "Leadership & values",
+    "items": [
+      {
+        "title": "Integrity & Accuracy",
+        "text": "A zero-tolerance approach to capitalisation errors and governance oversights. Every share, every percentage, reconciled."
+      },
+      {
+        "title": "Transparency",
+        "text": "Clear ownership visualisation for all stakeholders, fostering long-term trust between founders, investors and teams."
+      },
+      {
+        "title": "Security",
+        "text": "Strict access controls and confidential handling safeguard your sensitive financial and ownership data."
+      }
+    ]
+  },
+  "reasons": {
+    "title": "Why work with us?",
+    "items": [
+      "Custom equity frameworks tailored to tech startups, manufacturing enterprises, founders & investors.",
+      "Local regulatory alignment, executed alongside licensed CA, CS and legal professionals.",
+      "Hands-on guidance from equity specialists who assist at every stage of your requirements."
+    ]
+  },
+  "ctaEyebrow": "Contact & consultation"
+}

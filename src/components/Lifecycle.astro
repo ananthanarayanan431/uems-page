@@ -1,29 +1,21 @@
 ---
 // Equity isn't a one-time event: a line that draws itself across the company lifecycle.
-const stages = [
-  'Company formation',
-  'Founder equity',
-  'ESOP',
-  'Angel / Seed',
-  'Series A / B',
-  'Secondary transactions',
-  'PE investment',
-  'Buyout / IPO readiness',
-];
+import { content, rich } from '../lib/content';
+
+const c = await content('lifecycle');
 ---
 <section class="life" data-theme="light" aria-labelledby="life-title">
   <div class="wrap">
     <div class="life__head">
-      <p class="eyebrow" data-fade>Across the lifecycle</p>
+      <p class="eyebrow" data-fade>{c.eyebrow}</p>
       <h2 id="life-title" class="life__title" data-reveal>
-        <span class="split-line"><span>Not a single round.</span></span>
-        <span class="split-line"><span><em class="serif">Every stage of ownership.</em></span></span>
+        {c.title.map((l) => <span class="split-line"><span>{rich(l).map((p) => (p.em ? <em class="serif">{p.text}</em> : p.text))}</span></span>)}
       </h2>
     </div>
 
     <ol class="life__track" data-life>
       <span class="life__rail" aria-hidden="true"><i data-life-fill></i></span>
-      {stages.map((s, i) => (
+      {c.stages.map((s, i) => (
         <li class="life__stop" data-stop>
           <span class="life__n">{String(i + 1).padStart(2, '0')}</span>
           <i class="life__dot" aria-hidden="true"></i>

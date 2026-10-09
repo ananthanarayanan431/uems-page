@@ -1,0 +1,27 @@
+{
+  "messageA": "Equity shouldn’t *look like this.*",
+  "messageB": "Clarity *changes everything.*",
+  "fragments": [
+    { "text": "Founder A" },
+    { "text": "Series A???" },
+    { "text": "13.2%", "big": true },
+    { "text": "Investor B" },
+    { "text": "ESOP??" },
+    { "text": "23%", "big": true },
+    { "text": "Investor C" },
+    { "text": "Spreadsheet_v7_FINAL_FINAL.xlsx", "file": true },
+    { "text": "cap_table (3).xlsx", "file": true },
+    { "text": "Who signed the SHA?" },
+    { "text": "7.8%?", "big": true },
+    { "text": "Convertible note: terms?" }
+  ],
+  "tree": {
+    "title": "A single company owned by founders (52%), investors (38%) and an ESOP pool (10%).",
+    "company": "Company",
+    "holders": [
+      { "label": "Founders", "value": "52%" },
+      { "label": "Investors", "value": "38%" },
+      { "label": "ESOP", "value": "10%" }
+    ]
+  }
+}

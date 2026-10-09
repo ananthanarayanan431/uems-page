@@ -1,0 +1,182 @@
+{
+  "eyebrow": "Solutions",
+  "title": [
+    "Four disciplines.",
+    "*One ownership story.*"
+  ],
+  "lede": "Engage us for one discipline or all four. Each is scoped up front, with clear deliverables and the right licensed professionals alongside.",
+  "includedLabel": "What’s included",
+  "bestForLabel": "Best for",
+  "engagementLabel": "Engagement",
+  "outcomeLabel": "Outcome",
+  "trackerLabel": "Engagement tracker · example",
+  "trackerAriaLabel": "Example engagement",
+  "ctaPrefix": "Discuss",
+  "statusLabels": {
+    "done": "Done",
+    "active": "In progress",
+    "queued": "Queued"
+  },
+  "items": [
+    {
+      "id": "structuring",
+      "title": "Equity Structuring",
+      "short": "Frameworks for how ownership should work",
+      "text": "Custom equity frameworks designed around your industry and ownership. Whether it’s an early dilutive investment or a late-stage leveraged buyout structure, we align your equity distribution strategy with institutional standards.",
+      "includes": [
+        "Cap-table audit and reconciliation",
+        "Pre- and post-money dilution scenarios",
+        "Share classes and instruments: equity, CCPS, CCDs",
+        "ESOP pool sizing and vesting design",
+        "Liquidation-preference and exit waterfalls"
+      ],
+      "bestFor": "Founders before a round · promoters restructuring",
+      "model": "Project engagement",
+      "outcome": "A recommended equity structure your board can approve",
+      "tracker": {
+        "title": "Structuring engagement",
+        "sub": "ABC Manufacturing Pvt Ltd",
+        "steps": [
+          {
+            "name": "Cap-table audit",
+            "status": "done"
+          },
+          {
+            "name": "Dilution scenarios modelled",
+            "status": "done"
+          },
+          {
+            "name": "Instrument recommendation",
+            "status": "active"
+          },
+          {
+            "name": "Board presentation",
+            "status": "queued"
+          }
+        ]
+      }
+    },
+    {
+      "id": "capital",
+      "title": "Capital Facilitation",
+      "short": "Equity transformation that mobilises capital",
+      "text": "We facilitate the equity transformation required to mobilise working capital: preparing the company, coordinating valuation and investors, and creating transparent liquidity pathways for every stakeholder.",
+      "includes": [
+        "Fundraise-readiness review",
+        "Valuations by registered valuers and FEMA pricing certificates",
+        "Investor materials and data room",
+        "Term-sheet review with dilution impact",
+        "Buybacks, secondaries and liquidity pathways"
+      ],
+      "bestFor": "Companies raising growth or working capital",
+      "model": "Project engagement",
+      "outcome": "A round that closes with a clean, agreed cap table",
+      "tracker": {
+        "title": "₹10 Cr growth round",
+        "sub": "Series A · illustrative",
+        "steps": [
+          {
+            "name": "Readiness review",
+            "status": "done"
+          },
+          {
+            "name": "Valuation report",
+            "status": "done"
+          },
+          {
+            "name": "Data room live",
+            "status": "active"
+          },
+          {
+            "name": "Term sheet signed",
+            "status": "queued"
+          },
+          {
+            "name": "Funds received",
+            "status": "queued"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ownership",
+      "title": "Ownership Management",
+      "short": "One accurate record of who owns what",
+      "text": "A single, reconciled source of truth for your ownership: shareholder records, ESOP administration, funding-round history and clear ownership visualisation for founders, investors and employees.",
+      "includes": [
+        "Reconciled cap table and shareholder register",
+        "ESOP grants, vesting and exercise administration",
+        "Round-by-round ownership history",
+        "Investor and stakeholder reporting",
+        "Share dematerialisation under Rule 9B, where applicable"
+      ],
+      "bestFor": "Growing companies with investors or an ESOP",
+      "model": "Ongoing retainer",
+      "outcome": "Ownership that is accurate before anyone asks",
+      "tracker": {
+        "title": "ESOP administration",
+        "sub": "FY 2026 · 10% pool",
+        "steps": [
+          {
+            "name": "Pool approved by shareholders",
+            "status": "done"
+          },
+          {
+            "name": "24 grant letters issued",
+            "status": "done"
+          },
+          {
+            "name": "Vesting schedules synced",
+            "status": "active"
+          },
+          {
+            "name": "Quarterly investor report",
+            "status": "queued"
+          }
+        ]
+      }
+    },
+    {
+      "id": "transactions",
+      "title": "Transaction Support",
+      "short": "Hands-on guidance through to closing",
+      "text": "Equity specialists who assist at every stage. We coordinate your CA, CS and legal counsel so documentation, approvals and filings stay aligned with local regulation, and the cap table is updated the day the deal closes.",
+      "includes": [
+        "SHA / SSA coordination with legal counsel",
+        "Board and shareholder resolutions",
+        "Allotment filings (PAS-3, MGT-14) with your CS",
+        "FC-GPR reporting for foreign investors",
+        "Post-closing cap-table update"
+      ],
+      "bestFor": "Any company mid-transaction",
+      "model": "Per transaction",
+      "outcome": "A documented, compliant close with no loose ends",
+      "tracker": {
+        "title": "Closing checklist",
+        "sub": "Allotment to new investor",
+        "steps": [
+          {
+            "name": "Board resolution passed",
+            "status": "done"
+          },
+          {
+            "name": "SHA executed",
+            "status": "done"
+          },
+          {
+            "name": "Allotment & PAS-3 filing",
+            "status": "active"
+          },
+          {
+            "name": "FC-GPR reporting",
+            "status": "queued"
+          },
+          {
+            "name": "Cap table updated",
+            "status": "queued"
+          }
+        ]
+      }
+    }
+  ]
+}

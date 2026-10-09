@@ -1,51 +1,20 @@
 ---
 // "Every business vertical": an orbit around UEMS. Choosing a vertical
 // re-tunes the whole section to that industry's equity agenda.
-const verticals = [
-  {
-    id: 'mfg',
-    name: 'Manufacturing',
-    line: 'Asset-heavy enterprises funding plants, capacity and supply chains.',
-    items: ['Plant expansion', 'Working capital', 'Strategic investors', 'Ownership restructuring'],
-  },
-  {
-    id: 'saas',
-    name: 'SaaS',
-    line: 'High-growth software companies scaling through successive rounds.',
-    items: ['Founder equity', 'ESOP pools', 'Seed / Series funding', 'Investor management'],
-  },
-  {
-    id: 'health',
-    name: 'Healthcare',
-    line: 'Multi-entity networks balancing clinicians, promoters and investors.',
-    items: ['Multi-entity ownership', 'Strategic investment', 'Expansion capital', 'Governance'],
-  },
-  {
-    id: 'retail',
-    name: 'Retail & Franchise',
-    line: 'Chains structuring ownership across founders, partners and outlets.',
-    items: ['Franchise structures', 'Partner equity', 'Growth capital', 'Entity consolidation'],
-  },
-  {
-    id: 'services',
-    name: 'Professional Services',
-    line: 'Partnership-led firms planning succession and partner economics.',
-    items: ['Partner equity', 'Succession planning', 'Buy-in / buy-out', 'Profit-share alignment'],
-  },
-];
+import { content, rich } from '../lib/content';
+
+const c = await content('industries');
+const verticals = c.items;
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 <section class="ind" id="industries" data-theme="light" aria-labelledby="ind-title">
   <div class="wrap">
     <div class="ind__head">
-      <p class="eyebrow" data-fade>Industry-agnostic by design</p>
+      <p class="eyebrow" data-fade>{c.eyebrow}</p>
       <h2 id="ind-title" class="ind__title" data-reveal>
-        <span class="split-line"><span>Simplified for every</span></span>
-        <span class="split-line"><span><em class="serif">business vertical.</em></span></span>
+        {c.title.map((l) => <span class="split-line"><span>{rich(l).map((p) => (p.em ? <em class="serif">{p.text}</em> : p.text))}</span></span>)}
       </h2>
-      <p class="lede" data-fade>
-        Whatever you build, equity structure is the backbone of your ownership governance. Choose a
-        vertical.
-      </p>
+      <p class="lede" data-fade>{c.lede}</p>
     </div>
 
     <div class="ind__grid">
@@ -57,9 +26,9 @@ const verticals = [
           <line x1="300" y1="300" x2="300" y2="70" data-orbit-ray />
         </svg>
         <div class="orbit__core" aria-hidden="true">
-          <span>UEMS</span>
+          <span>{c.coreLabel}</span>
         </div>
-        <div role="tablist" aria-label="Business verticals" class="orbit__nodes">
+        <div role="tablist" aria-label={c.tablistLabel} class="orbit__nodes">
           {verticals.map((v, i) => (
             <button
               role="tab"
@@ -77,7 +46,7 @@ const verticals = [
       </div>
 
       <div class="ind__panel" id="ind-panel" role="tabpanel" aria-live="polite" data-ind-panel>
-        <p class="ind__k" data-ind-k>01 / 05</p>
+        <p class="ind__k" data-ind-k>{pad(1)} / {pad(verticals.length)}</p>
         <h3 class="ind__name display" data-ind-name>{verticals[0].name}</h3>
         <p class="ind__line" data-ind-line>{verticals[0].line}</p>
         <ul class="ind__list" data-ind-list>
@@ -99,6 +68,7 @@ const verticals = [
   type V = { id: string; name: string; line: string; items: string[] };
   const data = (window as unknown as { __UEMS_VERTICALS: V[] }).__UEMS_VERTICALS;
 
+  const pad = (n: number) => String(n).padStart(2, '0');
   const orbit = document.querySelector<HTMLElement>('[data-orbit]')!;
   const nodes = gsap.utils.toArray<HTMLButtonElement>('.onode');
   const ray = orbit.querySelector<SVGLineElement>('[data-orbit-ray]')!;
@@ -131,7 +101,7 @@ const verticals = [
     nodes.forEach((n, k) => n.setAttribute('aria-selected', String(k === i)));
     panel.setAttribute('aria-labelledby', `tab-${v.id}`);
     const swap = () => {
-      $('[data-ind-k]').textContent = `0${i + 1} / 05`;
+      $('[data-ind-k]').textContent = `${pad(i + 1)} / ${pad(data.length)}`;
       $('[data-ind-name]').textContent = v.name;
       $('[data-ind-line]').textContent = v.line;
       $('[data-ind-list]').innerHTML = v.items.map((t) => `<li><span>${t}</span></li>`).join('');

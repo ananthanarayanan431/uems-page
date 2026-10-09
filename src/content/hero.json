@@ -1,0 +1,34 @@
+{
+  "eyebrow": "Equity advisory · Cap-table management · Capital facilitation",
+  "title": ["Modern equity management,", "*simplified* for every", "business vertical."],
+  "sub": "Streamline capitalization & equity facilitation. Universal Equity Management Solutions structures, manages and facilitates ownership for founders, promoters and investors, from the first cap table to growth capital and exit.",
+  "primaryCta": "Request a Consultation",
+  "secondaryCta": "View Solutions",
+  "trust": [
+    { "title": "Custom frameworks", "text": "Built for your industry and owners" },
+    { "title": "Local regulatory alignment", "text": "Companies Act, FEMA & SEBI aware" },
+    { "title": "{offices}", "text": "Equity specialists, hands-on" }
+  ],
+  "capTable": {
+    "label": "Cap table · illustrative",
+    "company": "ABC Manufacturing Pvt Ltd",
+    "ariaLabel": "Illustrative cap table before and after a ₹10 crore equity round",
+    "tabBefore": "Today",
+    "tabAfter": "After ₹10 Cr round",
+    "holders": [
+      { "name": "Founder A", "before": 60, "after": 48 },
+      { "name": "Founder B", "before": 40, "after": 32 },
+      { "name": "Growth investor", "before": 0, "after": 20 }
+    ],
+    "shareholderHeading": "Shareholder",
+    "ownershipHeading": "Ownership",
+    "valuationLabel": "Valuation",
+    "valuationBefore": "₹40 Cr pre-money",
+    "valuationAfter": "₹50 Cr post-money",
+    "capitalLabel": "Capital mobilised",
+    "capitalPrefix": "₹",
+    "capitalSuffix": " Cr",
+    "capitalRaised": 10,
+    "chip": "+ ₹10 Cr growth capital"
+  }
+}

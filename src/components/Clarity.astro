@@ -1,49 +1,55 @@
 ---
 // Chaos → clarity: fragments of a broken cap table snap into one clean structure.
-const fragments = [
-  { t: 'Founder A', x: 12, y: 22, r: -8 },
-  { t: 'Series A???', x: 68, y: 16, r: 6 },
-  { t: '13.2%', x: 30, y: 62, r: -4, big: true },
-  { t: 'Investor B', x: 78, y: 58, r: 10 },
-  { t: 'ESOP??', x: 18, y: 78, r: 5 },
-  { t: '23%', x: 58, y: 34, r: -12, big: true },
-  { t: 'Investor C', x: 44, y: 84, r: -6 },
-  { t: 'Spreadsheet_v7_FINAL_FINAL.xlsx', x: 36, y: 12, r: 3, file: true },
-  { t: 'cap_table (3).xlsx', x: 70, y: 80, r: -9, file: true },
-  { t: 'Who signed the SHA?', x: 82, y: 36, r: 4 },
-  { t: '7.8%?', x: 8, y: 48, r: 12, big: true },
-  { t: 'Convertible note: terms?', x: 54, y: 66, r: -3 },
+import { content, rich } from '../lib/content';
+
+const c = await content('clarity');
+// Layout of the scattered fragments (percent of the stage, rotation in degrees).
+// Position i belongs to fragment i; extra fragments wrap around.
+const pos = [
+  { x: 12, y: 22, r: -8 },
+  { x: 68, y: 16, r: 6 },
+  { x: 30, y: 62, r: -4 },
+  { x: 78, y: 58, r: 10 },
+  { x: 18, y: 78, r: 5 },
+  { x: 58, y: 34, r: -12 },
+  { x: 44, y: 84, r: -6 },
+  { x: 36, y: 12, r: 3 },
+  { x: 70, y: 80, r: -9 },
+  { x: 82, y: 36, r: 4 },
+  { x: 8, y: 48, r: 12 },
+  { x: 54, y: 66, r: -3 },
 ];
+const treeX = [120, 360, 600];
 ---
 <section class="clr" data-theme="dark" aria-labelledby="clr-title">
   <div class="clr__pin" data-clr>
     <div class="clr__chaos" aria-hidden="true">
-      {fragments.map((f) => (
+      {c.fragments.map((f, i) => (
         <span
           class:list={['frag', { 'frag--big': f.big, 'frag--file': f.file }]}
-          style={`left:${f.x}%;top:${f.y}%;--r:${f.r}deg`}
-        >{f.t}</span>
+          style={`left:${pos[i % pos.length].x}%;top:${pos[i % pos.length].y}%;--r:${pos[i % pos.length].r}deg`}
+        >{f.text}</span>
       ))}
     </div>
 
     <h2 id="clr-title" class="clr__msg clr__msg--a" data-clr-a>
-      Equity shouldn’t <em class="serif">look like this.</em>
+      {rich(c.messageA).map((p) => (p.em ? <em class="serif">{p.text}</em> : p.text))}
     </h2>
 
     <div class="clr__order" data-clr-order>
       <svg viewBox="0 0 720 300" class="clr__tree" aria-labelledby="clr-tree-title" role="img">
-        <title id="clr-tree-title">A single company owned by founders (52%), investors (38%) and an ESOP pool (10%).</title>
+        <title id="clr-tree-title">{c.tree.title}</title>
         <path class="t-line" d="M360 58 V130 M120 130 H600 M120 130 V190 M360 130 V190 M600 130 V190" />
-        <g class="t-node t-root"><rect x="280" y="18" width="160" height="44" rx="22" /><text x="360" y="45">COMPANY</text></g>
-        {[['Founders', '52%', 120], ['Investors', '38%', 360], ['ESOP', '10%', 600]].map(([l, v, x]) => (
+        <g class="t-node t-root"><rect x="280" y="18" width="160" height="44" rx="22" /><text x="360" y="45">{c.tree.company.toUpperCase()}</text></g>
+        {c.tree.holders.map((h, i) => (
           <g class="t-node">
-            <circle cx={x} cy="198" r="8" />
-            <text x={x} y="240" class="t-lbl">{String(l).toUpperCase()}</text>
-            <text x={x} y="284" class="t-val">{v}</text>
+            <circle cx={treeX[i]} cy="198" r="8" />
+            <text x={treeX[i]} y="240" class="t-lbl">{h.label.toUpperCase()}</text>
+            <text x={treeX[i]} y="284" class="t-val">{h.value}</text>
           </g>
         ))}
       </svg>
-      <p class="clr__msg clr__msg--b">Clarity <em class="serif">changes everything.</em></p>
+      <p class="clr__msg clr__msg--b">{rich(c.messageB).map((p) => (p.em ? <em class="serif">{p.text}</em> : p.text))}</p>
     </div>
   </div>
 </section>

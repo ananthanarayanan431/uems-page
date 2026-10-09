@@ -1,46 +1,20 @@
 ---
+import { content, rich } from '../lib/content';
 import Base from '../layouts/Base.astro';
 import FinalCta from '../components/FinalCta.astro';
 import NodeDivider from '../components/NodeDivider.astro';
 
-const values = [
-  {
-    t: 'Integrity & Accuracy',
-    d: 'A zero-tolerance approach to capitalisation errors and governance oversights. Every share, every percentage, reconciled.',
-  },
-  {
-    t: 'Transparency',
-    d: 'Clear ownership visualisation for all stakeholders, fostering long-term trust between founders, investors and teams.',
-  },
-  {
-    t: 'Security',
-    d: 'Strict access controls and confidential handling safeguard your sensitive financial and ownership data.',
-  },
-];
-const reasons = [
-  'Custom equity frameworks tailored to tech startups, manufacturing enterprises, founders & investors.',
-  'Local regulatory alignment, executed alongside licensed CA, CS and legal professionals.',
-  'Hands-on guidance from equity specialists who assist at every stage of your requirements.',
-];
-const verticals = ['High-growth SaaS', 'Asset-heavy manufacturing', 'Multi-entity healthcare', 'Franchise retail chains'];
+const c = await content('about');
 ---
-<Base
-  title="About | Universal Equity Management Solutions"
-  description="UEMS bridges complex legal frameworks and seamless equity administration for companies of every scale and industry."
->
+<Base title={c.seo.title} description={c.seo.description}>
   <section class="ah" data-theme="light">
     <div class="wrap ah__grid">
       <div>
-        <p class="eyebrow ah__in">About UEMS</p>
+        <p class="eyebrow ah__in">{c.eyebrow}</p>
         <h1 class="ah__title" data-reveal>
-          <span class="split-line"><span>Empowering businesses</span></span>
-          <span class="split-line"><span>with transparent,</span></span>
-          <span class="split-line"><span>compliant <em class="serif">equity solutions.</em></span></span>
+          {c.title.map((l) => <span class="split-line"><span>{rich(l).map((p) => (p.em ? <em class="serif">{p.text}</em> : p.text))}</span></span>)}
         </h1>
-        <p class="lede ah__in">
-          We bridge the gap between complex legal frameworks and seamless equity administration for
-          companies of every scale and industry.
-        </p>
+        <p class="lede ah__in">{c.lede}</p>
       </div>
       <svg class="ah__mark" viewBox="0 0 400 400" aria-hidden="true">
         <g class="ah__spin">
@@ -61,21 +35,13 @@ const verticals = ['High-growth SaaS', 'Asset-heavy manufacturing', 'Multi-entit
   <NodeDivider />
   <section class="story" data-theme="light">
     <div class="wrap story__grid">
-      <p class="eyebrow" data-fade>Our story & mission</p>
+      <p class="eyebrow" data-fade>{c.story.eyebrow}</p>
       <div>
-        <p class="story__big" data-fade>
-          Managing equity shouldn’t be a web of fragmented spreadsheets, compliance risk and
-          administrative friction.
-        </p>
+        <p class="story__big" data-fade>{c.story.big}</p>
         <div class="story__cols">
-          <p data-fade>
-            Founded by industry experts in corporate finance and venture governance, UEMS was built to
-            turn equity management into a strategic advantage, not an afterthought.
-          </p>
+          <p data-fade>{c.story.paragraphA}</p>
           <p data-fade="0.1">
-            <strong>Our mission</strong> is to help founders and investors navigate capitalisation with
-            confidence: the right structure, the right records, and the right people around every
-            transaction.
+            <strong>{c.story.missionLabel}</strong> {c.story.missionText}
           </p>
         </div>
       </div>
@@ -84,21 +50,16 @@ const verticals = ['High-growth SaaS', 'Asset-heavy manufacturing', 'Multi-entit
 
   <section class="model" data-theme="dark">
     <div class="wrap">
-      <p class="eyebrow" data-fade>How we work</p>
+      <p class="eyebrow" data-fade>{c.model.eyebrow}</p>
       <h2 class="model__title" data-reveal>
-        <span class="split-line"><span>Three layers,</span></span>
-        <span class="split-line"><span><em class="serif">one lifecycle.</em></span></span>
-      </h2>
+          {c.model.title.map((l) => <span class="split-line"><span>{rich(l).map((p) => (p.em ? <em class="serif">{p.text}</em> : p.text))}</span></span>)}
+        </h2>
       <div class="model__flow">
-        {[
-          ['Equity Advisory', 'Capital-structure strategy, valuation scenarios, dilution and restructuring.'],
-          ['Equity Management', 'Cap tables, shareholder records, ESOPs, round history and investor reporting.'],
-          ['Transaction Facilitation', 'Coordinating CA, CS, legal counsel, valuers and regulated intermediaries where required.'],
-        ].map(([t, d], i) => (
+        {c.model.steps.map((m, i) => (
           <div class="model__step" data-fade={i * 0.12}>
             <span class="model__n">0{i + 1}</span>
-            <h3>{t}</h3>
-            <p>{d}</p>
+            <h3>{m.title}</h3>
+            <p>{m.text}</p>
           </div>
         ))}
       </div>
@@ -108,26 +69,23 @@ const verticals = ['High-growth SaaS', 'Asset-heavy manufacturing', 'Multi-entit
   <section class="agn" data-theme="pale">
     <div class="wrap agn__grid">
       <div>
-        <p class="eyebrow" data-fade>Industry-agnostic equity management</p>
+        <p class="eyebrow" data-fade>{c.agnostic.eyebrow}</p>
         <h2 class="agn__title" data-fade>
-          Equity structure is the backbone of your ownership governance.
+          {c.agnostic.title}
         </h2>
-        <p class="lede" data-fade>
-          Our facilitation service creates transparent liquidity pathways for all stakeholders,
-          whatever you build.
-        </p>
+        <p class="lede" data-fade>{c.agnostic.lede}</p>
       </div>
       <ul class="agn__list">
-        {verticals.map((v, i) => <li data-fade={i * 0.08}><i></i>{v}</li>)}
+        {c.agnostic.verticals.map((v, i) => <li data-fade={i * 0.08}><i></i>{v}</li>)}
       </ul>
     </div>
   </section>
 
   <section class="vals" data-theme="light">
     <div class="wrap">
-      <p class="eyebrow" data-fade>Leadership & values</p>
+      <p class="eyebrow" data-fade>{c.values.eyebrow}</p>
       <div class="vals__grid">
-        {values.map((v, i) => (
+        {c.values.items.map((v, i) => (
           <article class="val" data-fade={i * 0.1} data-cursor="Learn +">
             <svg viewBox="0 0 80 80" aria-hidden="true" class="val__icon">
               <circle cx="40" cy="40" r="34" />
@@ -135,16 +93,16 @@ const verticals = ['High-growth SaaS', 'Asset-heavy manufacturing', 'Multi-entit
               {i === 1 && <><circle cx="40" cy="40" r="12" /><circle cx="40" cy="40" r="3" class="fill" /></>}
               {i === 2 && <><rect x="27" y="36" width="26" height="20" rx="3" /><path d="M32 36 V30 a8 8 0 0 1 16 0 V36" /></>}
             </svg>
-            <h3>{v.t}</h3>
-            <p>{v.d}</p>
+            <h3>{v.title}</h3>
+            <p>{v.text}</p>
           </article>
         ))}
       </div>
 
       <div class="reasons">
-        <h2 class="reasons__title" data-fade>Why work with us?</h2>
+        <h2 class="reasons__title" data-fade>{c.reasons.title}</h2>
         <ol>
-          {reasons.map((r, i) => (
+          {c.reasons.items.map((r, i) => (
             <li data-fade={i * 0.08}><span>0{i + 1}</span>{r}</li>
           ))}
         </ol>
@@ -152,7 +110,7 @@ const verticals = ['High-growth SaaS', 'Asset-heavy manufacturing', 'Multi-entit
     </div>
   </section>
 
-  <FinalCta eyebrow="Contact & consultation" />
+  <FinalCta eyebrow={c.ctaEyebrow} />
 </Base>
 
 <script>

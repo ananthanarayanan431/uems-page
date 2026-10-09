@@ -1,48 +1,24 @@
 ---
-const faqs = [
-  {
-    q: 'What does Universal Equity Management Solutions do?',
-    a: 'We help businesses structure, manage and facilitate their ownership. That covers designing equity frameworks, maintaining cap tables and ESOPs, modelling dilution, and coordinating the equity transactions that let a company bring in capital or change its ownership.',
-  },
-  {
-    q: 'How is equity financing different from a bank loan?',
-    a: 'A loan leaves ownership unchanged but must be repaid with interest. Equity financing brings in capital in exchange for shares. There is no repayment schedule, but ownership percentages change. For example, ₹10 Cr invested at a ₹40 Cr pre-money valuation buys 20% of a ₹50 Cr company. We help you understand and structure that trade-off.',
-  },
-  {
-    q: 'Are you an investment bank or a lender?',
-    a: 'No. UEMS provides equity advisory, administration and transaction coordination. Where an activity requires a SEBI-registered merchant banker (for example, a public or rights issue), a registered valuer or legal counsel, we work alongside those licensed professionals rather than in place of them.',
-  },
-  {
-    q: 'Which businesses do you work with?',
-    a: 'We are industry-agnostic: high-growth SaaS companies, asset-heavy manufacturers, multi-entity healthcare networks, franchise retail chains and professional-services firms, from founder-led startups to promoter-run family businesses.',
-  },
-  {
-    q: 'Where do you operate?',
-    a: 'Our offices are in Hyderabad, Mumbai and Bangalore, and we support engagements across India.',
-  },
-  {
-    q: 'How do we get started?',
-    a: 'Book a 15-minute introductory session with our equity specialists. We will understand your current ownership and capital needs, then propose a clear scope before any engagement begins.',
-  },
-];
+import { content, rich } from '../lib/content';
+
+const c = await content('faq');
 ---
 <section class="faq" data-theme="light" aria-labelledby="faq-title">
   <div class="wrap faq__grid">
     <div>
-      <p class="eyebrow" data-fade>FAQ</p>
+      <p class="eyebrow" data-fade>{c.eyebrow}</p>
       <h2 id="faq-title" class="h-display" data-reveal>
-        <span class="split-line"><span>Questions,</span></span>
-        <span class="split-line"><span><em>answered.</em></span></span>
+        {c.title.map((l) => <span class="split-line"><span>{rich(l).map((p) => (p.em ? <em>{p.text}</em> : p.text))}</span></span>)}
       </h2>
     </div>
     <div class="faq__list">
-      {faqs.map((f, i) => (
+      {c.items.map((f, i) => (
         <details class="qa" open={i === 0} data-fade={i * 0.04}>
           <summary data-cursor="Learn +">
-            <span>{f.q}</span>
+            <span>{f.question}</span>
             <i aria-hidden="true"></i>
           </summary>
-          <p>{f.a}</p>
+          <p>{f.answer}</p>
         </details>
       ))}
     </div>

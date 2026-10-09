@@ -1,0 +1,26 @@
+{
+  "seo": {
+    "title": "Request a Consultation | Universal Equity Management Solutions",
+    "description": "Book a 15-minute introductory session with UEMS equity specialists. Offices in Hyderabad, Mumbai and Bangalore."
+  },
+  "eyebrow": "Contact & consultation",
+  "title": ["Let’s structure", "*what’s next.*"],
+  "lede": "Ready to digitise and optimise your corporate equity structure? Schedule a 15-minute introductory session with our equity specialists.",
+  "emailLabel": "Email",
+  "phoneLabel": "Phone",
+  "officesLabel": "Offices",
+  "form": {
+    "heading": "Request a consultation",
+    "nameLabel": "Full name",
+    "companyLabel": "Company",
+    "emailLabel": "Work email",
+    "topicsLegend": "What do you need help with?",
+    "topics": ["Equity structuring", "Capital facilitation", "Cap-table management", "ESOP", "Transaction support", "Not sure yet"],
+    "messageLabel": "Anything we should know?",
+    "submit": "Send request",
+    "note": "Opens your email client with the details filled in.",
+    "missingMessage": "Please add your name, company and email.",
+    "sentMessage": "Your email client should open now. Thank you.",
+    "subjectPrefix": "Consultation request"
+  }
+}

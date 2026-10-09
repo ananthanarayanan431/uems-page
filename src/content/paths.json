@@ -1,0 +1,31 @@
+{
+  "eyebrow": "Start with the problem",
+  "title": ["What brings you", "to *UEMS?*"],
+  "lede": "We manage and facilitate the equity transformation businesses need to mobilise capital, with frameworks built around your industry, your owners and institutional standards.",
+  "items": [
+    {
+      "title": "Raise growth capital",
+      "text": "Mobilise working capital through equity. We model valuation and dilution, prepare the round and coordinate every party through to closing.",
+      "tag": "Capital facilitation",
+      "href": "#services"
+    },
+    {
+      "title": "Clean up the cap table",
+      "text": "Replace fragmented spreadsheets with one reconciled record of shareholders, share classes and instruments, ready for diligence.",
+      "tag": "Ownership management",
+      "href": "#services"
+    },
+    {
+      "title": "Design an ESOP",
+      "text": "Size the pool, set vesting and administer grants your team actually understands, so equity works as a retention tool.",
+      "tag": "Equity structuring",
+      "href": "#services"
+    },
+    {
+      "title": "Restructure ownership",
+      "text": "Promoter realignment, family holdings, partner buy-ins and leveraged buyout structures, designed cleanly and compliantly.",
+      "tag": "Transaction support",
+      "href": "#services"
+    }
+  ]
+}

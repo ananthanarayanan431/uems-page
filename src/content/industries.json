@@ -1,0 +1,39 @@
+{
+  "eyebrow": "Industry-agnostic by design",
+  "title": ["Simplified for every", "*business vertical.*"],
+  "lede": "Whatever you build, equity structure is the backbone of your ownership governance. Choose a vertical.",
+  "coreLabel": "UEMS",
+  "tablistLabel": "Business verticals",
+  "items": [
+    {
+      "id": "mfg",
+      "name": "Manufacturing",
+      "line": "Asset-heavy enterprises funding plants, capacity and supply chains.",
+      "items": ["Plant expansion", "Working capital", "Strategic investors", "Ownership restructuring"]
+    },
+    {
+      "id": "saas",
+      "name": "SaaS",
+      "line": "High-growth software companies scaling through successive rounds.",
+      "items": ["Founder equity", "ESOP pools", "Seed / Series funding", "Investor management"]
+    },
+    {
+      "id": "health",
+      "name": "Healthcare",
+      "line": "Multi-entity networks balancing clinicians, promoters and investors.",
+      "items": ["Multi-entity ownership", "Strategic investment", "Expansion capital", "Governance"]
+    },
+    {
+      "id": "retail",
+      "name": "Retail & Franchise",
+      "line": "Chains structuring ownership across founders, partners and outlets.",
+      "items": ["Franchise structures", "Partner equity", "Growth capital", "Entity consolidation"]
+    },
+    {
+      "id": "services",
+      "name": "Professional Services",
+      "line": "Partnership-led firms planning succession and partner economics.",
+      "items": ["Partner equity", "Succession planning", "Buy-in / buy-out", "Profit-share alignment"]
+    }
+  ]
+}

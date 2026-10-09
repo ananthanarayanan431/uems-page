@@ -1,60 +1,65 @@
 ---
 import Base from '../layouts/Base.astro';
+import { content, rich } from '../lib/content';
+
+const c = await content('contact');
+const site = await content('site');
 ---
-<Base
-  title="Request a Consultation | Universal Equity Management Solutions"
-  description="Book a 15-minute introductory session with UEMS equity specialists. Offices in Hyderabad, Mumbai and Bangalore."
->
+<Base title={c.seo.title} description={c.seo.description}>
   <section class="ct" data-theme="light">
     <div class="wrap ct__grid">
       <div>
-        <p class="eyebrow">Contact & consultation</p>
+        <p class="eyebrow">{c.eyebrow}</p>
         <h1 class="ct__title" data-reveal>
-          <span class="split-line"><span>Let’s structure</span></span>
-          <span class="split-line"><span><em class="serif">what’s next.</em></span></span>
+          {c.title.map((l) => <span class="split-line"><span>{rich(l).map((p) => (p.em ? <em class="serif">{p.text}</em> : p.text))}</span></span>)}
         </h1>
-        <p class="lede">
-          Ready to digitise and optimise your corporate equity structure? Schedule a 15-minute
-          introductory session with our equity specialists.
-        </p>
+        <p class="lede">{c.lede}</p>
         <dl class="ct__meta">
-          <div><dt>Email</dt><dd><a href="mailto:contact@yourfirm.com">contact@yourfirm.com</a></dd></div>
-          <div><dt>Phone</dt><dd><a href="tel:+18005550199">+1 (800) 555-0199</a></dd></div>
-          <div><dt>Offices</dt><dd>Hyderabad · Mumbai · Bangalore</dd></div>
+          <div><dt>{c.emailLabel}</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>
+          <div><dt>{c.phoneLabel}</dt><dd><a href={site.phone.href}>{site.phone.display}</a></dd></div>
+          <div><dt>{c.officesLabel}</dt><dd>{site.offices.join(' · ')}</dd></div>
         </dl>
       </div>
 
-      <form class="form" data-form novalidate>
-        <p class="form__k">Request a consultation</p>
+      <form
+        class="form"
+        data-form
+        data-email={site.email}
+        data-subject={c.form.subjectPrefix}
+        data-missing={c.form.missingMessage}
+        data-sent={c.form.sentMessage}
+        novalidate
+      >
+        <p class="form__k">{c.form.heading}</p>
         <label>
-          <span>Full name</span>
+          <span>{c.form.nameLabel}</span>
           <input name="name" required autocomplete="name" />
         </label>
         <label>
-          <span>Company</span>
+          <span>{c.form.companyLabel}</span>
           <input name="company" required autocomplete="organization" />
         </label>
         <label>
-          <span>Work email</span>
+          <span>{c.form.emailLabel}</span>
           <input name="email" type="email" required autocomplete="email" />
         </label>
         <fieldset>
-          <legend>What do you need help with?</legend>
+          <legend>{c.form.topicsLegend}</legend>
           <div class="chips">
-            {['Equity structuring', 'Capital facilitation', 'Cap-table management', 'ESOP', 'Transaction support', 'Not sure yet'].map((c) => (
-              <label class="chip"><input type="checkbox" name="topic" value={c} /><span>{c}</span></label>
+            {c.form.topics.map((t) => (
+              <label class="chip"><input type="checkbox" name="topic" value={t} /><span>{t}</span></label>
             ))}
           </div>
         </fieldset>
         <label>
-          <span>Anything we should know?</span>
+          <span>{c.form.messageLabel}</span>
           <textarea name="message" rows="4"></textarea>
         </label>
         <button class="btn" type="submit" data-cursor="Send →">
-          Send request <span class="arrow" aria-hidden="true">→</span>
+          {c.form.submit} <span class="arrow" aria-hidden="true">→</span>
         </button>
         <p class="form__note" data-form-note role="status">
-          Opens your email client with the details filled in.
+          {c.form.note}
         </p>
       </form>
     </div>
@@ -70,7 +75,7 @@ import Base from '../layouts/Base.astro';
     const fd = new FormData(form);
     const missing = ['name', 'company', 'email'].filter((k) => !String(fd.get(k) || '').trim());
     if (missing.length) {
-      note.textContent = 'Please add your name, company and email.';
+      note.textContent = form.dataset.missing!;
       form.querySelector<HTMLInputElement>(`[name="${missing[0]}"]`)?.focus();
       return;
     }
@@ -83,9 +88,9 @@ import Base from '../layouts/Base.astro';
       '',
       String(fd.get('message') || ''),
     ].join('\n');
-    const subject = `Consultation request: ${fd.get('company')}`;
-    window.location.href = `mailto:contact@yourfirm.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    note.textContent = 'Your email client should open now. Thank you.';
+    const subject = `${form.dataset.subject}: ${fd.get('company')}`;
+    window.location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    note.textContent = form.dataset.sent!;
   });
 </script>
 

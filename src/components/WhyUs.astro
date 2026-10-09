@@ -1,42 +1,22 @@
 ---
-const reasons = [
-  {
-    t: 'Custom frameworks',
-    d: 'Equity structures tailored to tech startups, manufacturing enterprises, founders and investors. Never a template.',
-  },
-  {
-    t: 'Local regulatory alignment',
-    d: 'Structures designed around Indian corporate and securities regulation, executed alongside the right licensed professionals.',
-  },
-  {
-    t: 'Specialists, hands-on',
-    d: 'Equity specialists who assist at every stage of your requirements, from first cap table to complex secondary.',
-  },
-  {
-    t: 'Zero-error discipline',
-    d: 'Reconciled records and rigorous review eliminate the human errors that fragmented spreadsheets invite.',
-  },
-  {
-    t: 'Dedicated human support',
-    d: 'A named team that guides complex transactions personally, not a ticket queue.',
-  },
-];
+import { content, rich } from '../lib/content';
+
+const c = await content('why');
 ---
 <section class="why" data-theme="light" aria-labelledby="why-title">
   <div class="wrap why__grid">
     <div class="why__intro">
-      <p class="eyebrow" data-fade>Why organisations choose us</p>
+      <p class="eyebrow" data-fade>{c.eyebrow}</p>
       <h2 id="why-title" class="why__title" data-reveal>
-        <span class="split-line"><span>Precision is</span></span>
-        <span class="split-line"><span><em class="serif">the product.</em></span></span>
+        {c.title.map((l) => <span class="split-line"><span>{rich(l).map((p) => (p.em ? <em class="serif">{p.text}</em> : p.text))}</span></span>)}
       </h2>
     </div>
     <ol class="why__list">
-      {reasons.map((r, i) => (
+      {c.items.map((r, i) => (
         <li class="why__row" data-fade={i * 0.05} data-cursor="Learn +" tabindex="0">
           <span class="why__n">0{i + 1}</span>
-          <h3>{r.t}</h3>
-          <p>{r.d}</p>
+          <h3>{r.title}</h3>
+          <p>{r.text}</p>
           <span class="why__plus" aria-hidden="true">+</span>
         </li>
       ))}

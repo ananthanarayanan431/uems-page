@@ -1,11 +1,13 @@
 ---
 // Hero: editorial headline + a live cap-table card that shows the service
 // (ownership before and after an equity round) instead of decorating around it.
-const holders = [
-  { k: 'a', name: 'Founder A', before: 60, after: 48 },
-  { k: 'b', name: 'Founder B', before: 40, after: 32 },
-  { k: 'c', name: 'Growth investor', before: 0, after: 20 },
-];
+import { content, fill, rich } from '../lib/content';
+
+const c = await content('hero');
+const site = await content('site');
+const ct = c.capTable;
+const keys = ['a', 'b', 'c'];
+const holders = ct.holders.map((h, i) => ({ ...h, k: keys[i] }));
 ---
 <section class="hero" data-theme="light" aria-labelledby="hero-title">
   <svg class="hero__motif" viewBox="0 0 600 600" aria-hidden="true">
@@ -22,44 +24,36 @@ const holders = [
 
   <div class="wrap hero__grid">
     <div class="hero__copy">
-      <p class="eyebrow" data-hero-in>Equity advisory · Cap-table management · Capital facilitation</p>
+      <p class="eyebrow" data-hero-in>{c.eyebrow}</p>
 
       <h1 id="hero-title" class="hero__title">
-        <span class="split-line"><span>Modern equity management,</span></span>
-        <span class="split-line"><span><em>simplified</em> for every</span></span>
-        <span class="split-line"><span>business vertical.</span></span>
+        {c.title.map((l) => <span class="split-line"><span>{rich(l).map((p) => (p.em ? <em>{p.text}</em> : p.text))}</span></span>)}
       </h1>
 
-      <p class="hero__sub" data-hero-in>
-        Streamline capitalization &amp; equity facilitation. Universal Equity Management Solutions
-        structures, manages and facilitates ownership for founders, promoters and investors, from the
-        first cap table to growth capital and exit.
-      </p>
+      <p class="hero__sub" data-hero-in>{c.sub}</p>
 
       <div class="hero__ctas" data-hero-in>
         <a href="/contact" class="btn" data-cursor="Explore →">
-          Request a Consultation <span class="arrow" aria-hidden="true">→</span>
+          {c.primaryCta} <span class="arrow" aria-hidden="true">→</span>
         </a>
-        <a href="#paths" class="btn btn--ghost" data-cursor="Explore ↓">View Solutions</a>
+        <a href="#paths" class="btn btn--ghost" data-cursor="Explore ↓">{c.secondaryCta}</a>
       </div>
 
       <ul class="hero__trust" data-hero-in>
-        <li><b>Custom frameworks</b><span>Built for your industry and owners</span></li>
-        <li><b>Local regulatory alignment</b><span>Companies Act, FEMA &amp; SEBI aware</span></li>
-        <li><b>Hyderabad · Mumbai · Bangalore</b><span>Equity specialists, hands-on</span></li>
+        {c.trust.map((t) => <li><b>{fill(t.title, site)}</b><span>{t.text}</span></li>)}
       </ul>
     </div>
 
     <!-- live cap table -->
-    <figure class="ct-card" data-ctcard data-state="before" aria-label="Illustrative cap table before and after a ₹10 crore equity round">
+    <figure class="ct-card" data-ctcard data-state="before" aria-label={ct.ariaLabel}>
       <header class="ct-card__head">
         <div>
-          <span class="ct-card__k">Cap table · illustrative</span>
-          <strong>ABC Manufacturing Pvt Ltd</strong>
+          <span class="ct-card__k">{ct.label}</span>
+          <strong>{ct.company}</strong>
         </div>
         <div class="ct-toggle" role="tablist" aria-label="Cap table state">
-          <button role="tab" aria-selected="true" data-to="before">Today</button>
-          <button role="tab" aria-selected="false" data-to="after">After ₹10 Cr round</button>
+          <button role="tab" aria-selected="true" data-to="before">{ct.tabBefore}</button>
+          <button role="tab" aria-selected="false" data-to="after">{ct.tabAfter}</button>
           <i class="ct-toggle__pill" aria-hidden="true"></i>
         </div>
       </header>
@@ -70,7 +64,7 @@ const holders = [
 
       <table class="ct-table">
         <thead>
-          <tr><th scope="col">Shareholder</th><th scope="col">Ownership</th></tr>
+          <tr><th scope="col">{ct.shareholderHeading}</th><th scope="col">{ct.ownershipHeading}</th></tr>
         </thead>
         <tbody>
           {holders.map((h) => (
@@ -83,11 +77,11 @@ const holders = [
       </table>
 
       <footer class="ct-card__foot">
-        <div><span>Valuation</span><strong data-val>₹40 Cr pre-money</strong></div>
-        <div><span>Capital mobilised</span><strong class="gold" data-hero-cap>₹0</strong></div>
+        <div><span>{ct.valuationLabel}</span><strong data-val data-before={ct.valuationBefore} data-after={ct.valuationAfter}>{ct.valuationBefore}</strong></div>
+        <div><span>{ct.capitalLabel}</span><strong class="gold" data-hero-cap data-raised={ct.capitalRaised} data-prefix={ct.capitalPrefix} data-suffix={ct.capitalSuffix}>{ct.capitalPrefix}0</strong></div>
       </footer>
 
-      <span class="ct-chip" data-chip aria-hidden="true">+ ₹10 Cr growth capital</span>
+      <span class="ct-chip" data-chip aria-hidden="true">{ct.chip}</span>
     </figure>
   </div>
 </section>
@@ -126,18 +120,20 @@ const holders = [
       gsap.to(o, { v: target, duration: d, ease: 'power3.inOut', onUpdate: () => (c.textContent = `${Math.round(o.v)}%`) });
       gsap.to(card.querySelector(`[data-seg="${k}"]`), { width: `${target}%`, duration: d, ease: 'power3.inOut' });
     });
-    const cap = { v: next === 'after' ? 0 : 10 };
     const capEl = card.querySelector<HTMLElement>('[data-hero-cap]')!;
+    const raised = Number(capEl.dataset.raised);
+    const cap = { v: next === 'after' ? 0 : raised };
     gsap.to(cap, {
-      v: next === 'after' ? 10 : 0,
+      v: next === 'after' ? raised : 0,
       duration: d,
       ease: 'power2.out',
       onUpdate: () => {
         const v = Math.floor(cap.v / 2.5 + 0.001) * 2.5;
-        capEl.textContent = v ? `₹${v} Cr` : '₹0';
+        capEl.textContent = v ? `${capEl.dataset.prefix}${v}${capEl.dataset.suffix}` : `${capEl.dataset.prefix}0`;
       },
     });
-    card.querySelector('[data-val]')!.textContent = next === 'after' ? '₹50 Cr post-money' : '₹40 Cr pre-money';
+    const val = card.querySelector<HTMLElement>('[data-val]')!;
+    val.textContent = next === 'after' ? val.dataset.after! : val.dataset.before!;
     gsap.to(card.querySelector('[data-chip]'), {
       autoAlpha: next === 'after' ? 1 : 0,
       y: next === 'after' ? 0 : 10,

@@ -1,141 +1,23 @@
 ---
 // Services as a tabbed ledger: pick a discipline on the left, see exactly what
 // it includes, who it is for, and a live engagement tracker on the right.
-type Status = 'done' | 'active' | 'queued';
-const services: {
-  id: string;
-  t: string;
-  short: string;
-  d: string;
-  includes: string[];
-  bestFor: string;
-  model: string;
-  outcome: string;
-  tracker: { title: string; sub: string; steps: [string, Status][] };
-}[] = [
-  {
-    id: 'structuring',
-    t: 'Equity Structuring',
-    short: 'Frameworks for how ownership should work',
-    d: 'Custom equity frameworks designed around your industry and ownership. Whether it’s an early dilutive investment or a late-stage leveraged buyout structure, we align your equity distribution strategy with institutional standards.',
-    includes: [
-      'Cap-table audit and reconciliation',
-      'Pre- and post-money dilution scenarios',
-      'Share classes and instruments: equity, CCPS, CCDs',
-      'ESOP pool sizing and vesting design',
-      'Liquidation-preference and exit waterfalls',
-    ],
-    bestFor: 'Founders before a round · promoters restructuring',
-    model: 'Project engagement',
-    outcome: 'A recommended equity structure your board can approve',
-    tracker: {
-      title: 'Structuring engagement',
-      sub: 'ABC Manufacturing Pvt Ltd',
-      steps: [
-        ['Cap-table audit', 'done'],
-        ['Dilution scenarios modelled', 'done'],
-        ['Instrument recommendation', 'active'],
-        ['Board presentation', 'queued'],
-      ],
-    },
-  },
-  {
-    id: 'capital',
-    t: 'Capital Facilitation',
-    short: 'Equity transformation that mobilises capital',
-    d: 'We facilitate the equity transformation required to mobilise working capital: preparing the company, coordinating valuation and investors, and creating transparent liquidity pathways for every stakeholder.',
-    includes: [
-      'Fundraise-readiness review',
-      'Valuations by registered valuers and FEMA pricing certificates',
-      'Investor materials and data room',
-      'Term-sheet review with dilution impact',
-      'Buybacks, secondaries and liquidity pathways',
-    ],
-    bestFor: 'Companies raising growth or working capital',
-    model: 'Project engagement',
-    outcome: 'A round that closes with a clean, agreed cap table',
-    tracker: {
-      title: '₹10 Cr growth round',
-      sub: 'Series A · illustrative',
-      steps: [
-        ['Readiness review', 'done'],
-        ['Valuation report', 'done'],
-        ['Data room live', 'active'],
-        ['Term sheet signed', 'queued'],
-        ['Funds received', 'queued'],
-      ],
-    },
-  },
-  {
-    id: 'ownership',
-    t: 'Ownership Management',
-    short: 'One accurate record of who owns what',
-    d: 'A single, reconciled source of truth for your ownership: shareholder records, ESOP administration, funding-round history and clear ownership visualisation for founders, investors and employees.',
-    includes: [
-      'Reconciled cap table and shareholder register',
-      'ESOP grants, vesting and exercise administration',
-      'Round-by-round ownership history',
-      'Investor and stakeholder reporting',
-      'Share dematerialisation under Rule 9B, where applicable',
-    ],
-    bestFor: 'Growing companies with investors or an ESOP',
-    model: 'Ongoing retainer',
-    outcome: 'Ownership that is accurate before anyone asks',
-    tracker: {
-      title: 'ESOP administration',
-      sub: 'FY 2026 · 10% pool',
-      steps: [
-        ['Pool approved by shareholders', 'done'],
-        ['24 grant letters issued', 'done'],
-        ['Vesting schedules synced', 'active'],
-        ['Quarterly investor report', 'queued'],
-      ],
-    },
-  },
-  {
-    id: 'transactions',
-    t: 'Transaction Support',
-    short: 'Hands-on guidance through to closing',
-    d: 'Equity specialists who assist at every stage. We coordinate your CA, CS and legal counsel so documentation, approvals and filings stay aligned with local regulation, and the cap table is updated the day the deal closes.',
-    includes: [
-      'SHA / SSA coordination with legal counsel',
-      'Board and shareholder resolutions',
-      'Allotment filings (PAS-3, MGT-14) with your CS',
-      'FC-GPR reporting for foreign investors',
-      'Post-closing cap-table update',
-    ],
-    bestFor: 'Any company mid-transaction',
-    model: 'Per transaction',
-    outcome: 'A documented, compliant close with no loose ends',
-    tracker: {
-      title: 'Closing checklist',
-      sub: 'Allotment to new investor',
-      steps: [
-        ['Board resolution passed', 'done'],
-        ['SHA executed', 'done'],
-        ['Allotment & PAS-3 filing', 'active'],
-        ['FC-GPR reporting', 'queued'],
-        ['Cap table updated', 'queued'],
-      ],
-    },
-  },
-];
-const label: Record<Status, string> = { done: 'Done', active: 'In progress', queued: 'Queued' };
+import { content, rich } from '../lib/content';
+
+const c = await content('services');
+const services = c.items;
+const label = c.statusLabels;
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 <section class="svc" id="services" data-theme="light" aria-labelledby="svc-title">
   <div class="wrap">
     <div class="svc__head">
       <div>
-        <p class="eyebrow" data-fade>Solutions</p>
+        <p class="eyebrow" data-fade>{c.eyebrow}</p>
         <h2 id="svc-title" class="h-display" data-reveal>
-          <span class="split-line"><span>Four disciplines.</span></span>
-          <span class="split-line"><span><em>One ownership story.</em></span></span>
-        </h2>
+        {c.title.map((l) => <span class="split-line"><span>{rich(l).map((p) => (p.em ? <em>{p.text}</em> : p.text))}</span></span>)}
+      </h2>
       </div>
-      <p class="lede" data-fade>
-        Engage us for one discipline or all four. Each is scoped up front, with clear deliverables and
-        the right licensed professionals alongside.
-      </p>
+      <p class="lede" data-fade>{c.lede}</p>
     </div>
 
     <div class="svc__body" data-svc>
@@ -152,7 +34,7 @@ const label: Record<Status, string> = { done: 'Done', active: 'In progress', que
           >
             <span class="tab__n">0{i + 1}</span>
             <span class="tab__text">
-              <span class="tab__t">{s.t}</span>
+              <span class="tab__t">{s.title}</span>
               <span class="tab__s">{s.short}</span>
             </span>
             <span class="tab__arrow" aria-hidden="true">→</span>
@@ -171,11 +53,11 @@ const label: Record<Status, string> = { done: 'Done', active: 'In progress', que
             data-panel={i}
           >
             <div class="panel__main">
-              <span class="panel__k">0{i + 1} / 04</span>
-              <h3 class="panel__t">{s.t}</h3>
-              <p class="panel__d">{s.d}</p>
+              <span class="panel__k">{pad(i + 1)} / {pad(services.length)}</span>
+              <h3 class="panel__t">{s.title}</h3>
+              <p class="panel__d">{s.text}</p>
 
-              <p class="panel__label">What’s included</p>
+              <p class="panel__label">{c.includedLabel}</p>
               <ul class="panel__inc">
                 {s.includes.map((it) => (
                   <li>
@@ -186,20 +68,20 @@ const label: Record<Status, string> = { done: 'Done', active: 'In progress', que
               </ul>
 
               <dl class="panel__meta">
-                <div><dt>Best for</dt><dd>{s.bestFor}</dd></div>
-                <div><dt>Engagement</dt><dd>{s.model}</dd></div>
-                <div><dt>Outcome</dt><dd>{s.outcome}</dd></div>
+                <div><dt>{c.bestForLabel}</dt><dd>{s.bestFor}</dd></div>
+                <div><dt>{c.engagementLabel}</dt><dd>{s.model}</dd></div>
+                <div><dt>{c.outcomeLabel}</dt><dd>{s.outcome}</dd></div>
               </dl>
             </div>
 
-            <aside class="track" aria-label={`Example engagement: ${s.tracker.title}`}>
+            <aside class="track" aria-label={`${c.trackerAriaLabel}: ${s.tracker.title}`}>
               <header class="track__head">
-                <span class="track__k">Engagement tracker · example</span>
+                <span class="track__k">{c.trackerLabel}</span>
                 <strong>{s.tracker.title}</strong>
                 <span class="track__sub">{s.tracker.sub}</span>
               </header>
               <ol class="track__list">
-                {s.tracker.steps.map(([name, st]) => (
+                {s.tracker.steps.map(({ name, status: st }) => (
                   <li class={`step step--${st}`} data-status={st}>
                     <i class="step__icon" aria-hidden="true"></i>
                     <span class="step__name">{name}</span>
@@ -209,7 +91,7 @@ const label: Record<Status, string> = { done: 'Done', active: 'In progress', que
               </ol>
               <div class="track__bar" aria-hidden="true"><i data-progress></i></div>
               <a href="/contact" class="track__cta" data-cursor="Explore →">
-                Discuss {s.t.toLowerCase()} <span aria-hidden="true">→</span>
+                {c.ctaPrefix} {s.title.toLowerCase()} <span aria-hidden="true">→</span>
               </a>
             </aside>
           </article>

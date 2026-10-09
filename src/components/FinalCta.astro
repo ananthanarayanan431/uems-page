@@ -1,9 +1,13 @@
 ---
 // The hero network returns, simplified and resolved.
+import { content, rich } from '../lib/content';
+
 interface Props {
   eyebrow?: string;
 }
-const { eyebrow = 'Contact & next steps' } = Astro.props;
+const { eyebrow } = Astro.props;
+const c = await content('cta');
+const site = await content('site');
 ---
 <section class="fin" data-theme="dark" aria-labelledby="fin-title">
   <div class="wrap fin__inner">
@@ -23,27 +27,23 @@ const { eyebrow = 'Contact & next steps' } = Astro.props;
       ))}
     </svg>
 
-    <p class="eyebrow">{eyebrow}</p>
+    <p class="eyebrow">{eyebrow ?? c.eyebrow}</p>
     <h2 id="fin-title" class="fin__title" data-reveal>
-      <span class="split-line"><span>Your equity.</span></span>
-      <span class="split-line"><span><em class="serif">Structured.</em></span></span>
-    </h2>
-    <p class="fin__ask">Ready to build what’s next?</p>
-    <p class="fin__lede">
-      Ready to centralise and secure your company’s ownership structure? Book a 15-minute
-      introductory session with our equity specialists.
-    </p>
+        {c.title.map((l) => <span class="split-line"><span>{rich(l).map((p) => (p.em ? <em class="serif">{p.text}</em> : p.text))}</span></span>)}
+      </h2>
+    <p class="fin__ask">{c.ask}</p>
+    <p class="fin__lede">{c.lede}</p>
     <div class="fin__ctas">
       <a href="/contact" class="btn btn--gold" data-cursor="Explore →">
-        Request a Consultation <span class="arrow" aria-hidden="true">→</span>
+        {c.button} <span class="arrow" aria-hidden="true">→</span>
       </a>
-      <a href="mailto:contact@yourfirm.com" class="fin__mail" data-cursor="Write ✉">contact@yourfirm.com</a>
+      <a href={`mailto:${site.email}`} class="fin__mail" data-cursor="Write ✉">{site.email}</a>
     </div>
 
     <dl class="fin__meta">
-      <div><dt>Phone</dt><dd><a href="tel:+18005550199">+1 (800) 555-0199</a></dd></div>
-      <div><dt>Offices</dt><dd>Hyderabad · Mumbai · Bangalore</dd></div>
-      <div><dt>Onboarding</dt><dd>15-minute introductory session</dd></div>
+      <div><dt>{c.phoneLabel}</dt><dd><a href={site.phone.href}>{site.phone.display}</a></dd></div>
+      <div><dt>{c.officesLabel}</dt><dd>{site.offices.join(' · ')}</dd></div>
+      <div><dt>{c.onboardingLabel}</dt><dd>{c.onboarding}</dd></div>
     </dl>
   </div>
 </section>

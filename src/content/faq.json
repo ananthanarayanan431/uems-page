@@ -1,0 +1,30 @@
+{
+  "eyebrow": "FAQ",
+  "title": ["Questions,", "*answered.*"],
+  "items": [
+    {
+      "question": "What does Universal Equity Management Solutions do?",
+      "answer": "We help businesses structure, manage and facilitate their ownership. That covers designing equity frameworks, maintaining cap tables and ESOPs, modelling dilution, and coordinating the equity transactions that let a company bring in capital or change its ownership."
+    },
+    {
+      "question": "How is equity financing different from a bank loan?",
+      "answer": "A loan leaves ownership unchanged but must be repaid with interest. Equity financing brings in capital in exchange for shares. There is no repayment schedule, but ownership percentages change. For example, ₹10 Cr invested at a ₹40 Cr pre-money valuation buys 20% of a ₹50 Cr company. We help you understand and structure that trade-off."
+    },
+    {
+      "question": "Are you an investment bank or a lender?",
+      "answer": "No. UEMS provides equity advisory, administration and transaction coordination. Where an activity requires a SEBI-registered merchant banker (for example, a public or rights issue), a registered valuer or legal counsel, we work alongside those licensed professionals rather than in place of them."
+    },
+    {
+      "question": "Which businesses do you work with?",
+      "answer": "We are industry-agnostic: high-growth SaaS companies, asset-heavy manufacturers, multi-entity healthcare networks, franchise retail chains and professional-services firms, from founder-led startups to promoter-run family businesses."
+    },
+    {
+      "question": "Where do you operate?",
+      "answer": "Our offices are in Hyderabad, Mumbai and Bangalore, and we support engagements across India."
+    },
+    {
+      "question": "How do we get started?",
+      "answer": "Book a 15-minute introductory session with our equity specialists. We will understand your current ownership and capital needs, then propose a clear scope before any engagement begins."
+    }
+  ]
+}
