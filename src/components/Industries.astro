@@ -1,6 +1,7 @@
 ---
-// "Every business vertical": an orbit around UEMS. Choosing a vertical
-// re-tunes the whole section to that industry's equity agenda.
+// "Every business vertical": five expanding panels. The open panel shows that
+// industry's equity agenda; panels advance on their own until the visitor
+// hovers or picks one.
 import { content, rich } from '../lib/content';
 
 const c = await content('industries');
@@ -17,146 +18,100 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <p class="lede" data-fade>{c.lede}</p>
     </div>
 
-    <div class="ind__grid">
-      <div class="orbit" data-orbit>
-        <svg class="orbit__rings" viewBox="0 0 600 600" aria-hidden="true">
-          <circle cx="300" cy="300" r="230" />
-          <circle cx="300" cy="300" r="160" class="dash" />
-          <circle cx="300" cy="300" r="290" class="faint" />
-          <line x1="300" y1="300" x2="300" y2="70" data-orbit-ray />
-        </svg>
-        <div class="orbit__core" aria-hidden="true">
-          <span>{c.coreLabel}</span>
-        </div>
-        <div role="tablist" aria-label={c.tablistLabel} class="orbit__nodes">
-          {verticals.map((v, i) => (
-            <button
-              role="tab"
-              class="onode"
-              id={`tab-${v.id}`}
-              aria-controls="ind-panel"
-              aria-selected={i === 0 ? 'true' : 'false'}
-              data-v={i}
-            >
-              <i></i><span>{v.name}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div class="ind__panel" id="ind-panel" role="tabpanel" aria-live="polite" data-ind-panel>
-        <p class="ind__k" data-ind-k>{pad(1)} / {pad(verticals.length)}</p>
-        <h3 class="ind__name display" data-ind-name>{verticals[0].name}</h3>
-        <p class="ind__line" data-ind-line>{verticals[0].line}</p>
-        <ul class="ind__list" data-ind-list>
-          {verticals[0].items.map((it) => <li><span>{it}</span></li>)}
-        </ul>
-      </div>
+    <div class="deck" data-deck aria-label={c.tablistLabel} role="group">
+      {verticals.map((v, i) => (
+        <article class="leaf" data-leaf data-active={i === 0 ? '' : undefined} data-fade={i * 0.06}>
+          <button
+            class="leaf__tab"
+            id={`tab-${v.id}`}
+            aria-controls={`ind-${v.id}`}
+            aria-expanded={i === 0 ? 'true' : 'false'}
+          >
+            <span class="leaf__k">{pad(i + 1)}</span>
+            <span class="leaf__name">{v.name}</span>
+            <span class="leaf__plus" aria-hidden="true"></span>
+          </button>
+          <div class="leaf__body" id={`ind-${v.id}`} role="region" aria-labelledby={`tab-${v.id}`}>
+            <div class="leaf__inner">
+              <p class="leaf__count">{pad(i + 1)} / {pad(verticals.length)}</p>
+              <h3 class="leaf__title display">{v.name}</h3>
+              <p class="leaf__line">{v.line}</p>
+              <ul class="leaf__list">
+                {v.items.map((it, k) => <li style={`--i:${k}`}><span>{it}</span></li>)}
+              </ul>
+            </div>
+          </div>
+          <span class="leaf__bar" aria-hidden="true"><i></i></span>
+        </article>
+      ))}
     </div>
   </div>
 </section>
 
-<script define:vars={{ verticals }}>
-  window.__UEMS_VERTICALS = verticals;
-</script>
 
 <script>
   import { gsap } from 'gsap';
   import { reduced } from '../scripts/site';
 
-  type V = { id: string; name: string; line: string; items: string[] };
-  const data = (window as unknown as { __UEMS_VERTICALS: V[] }).__UEMS_VERTICALS;
-
-  const pad = (n: number) => String(n).padStart(2, '0');
-  const orbit = document.querySelector<HTMLElement>('[data-orbit]')!;
-  const nodes = gsap.utils.toArray<HTMLButtonElement>('.onode');
-  const ray = orbit.querySelector<SVGLineElement>('[data-orbit-ray]')!;
-  const panel = document.querySelector<HTMLElement>('[data-ind-panel]')!;
-  const $ = (s: string) => panel.querySelector<HTMLElement>(s)!;
+  const deck = document.querySelector<HTMLElement>('[data-deck]')!;
+  const leaves = Array.from(deck.querySelectorAll<HTMLElement>('[data-leaf]'));
+  const tabs = leaves.map((l) => l.querySelector<HTMLButtonElement>('.leaf__tab')!);
+  const bars = leaves.map((l) => l.querySelector<HTMLElement>('.leaf__bar i')!);
+  const DWELL = 6; // seconds each panel stays open while auto-advancing
 
   let active = 0;
-  let angle = -90; // degrees of the first node
-  let paused = false;
-  const R = 230 / 600; // radius relative to orbit size
+  let visible = false;
+  let hovering = false;
+  let timer: gsap.core.Tween | null = null;
 
-  function layout() {
-    const size = orbit.clientWidth;
-    nodes.forEach((n, i) => {
-      const a = ((angle + (360 / nodes.length) * i) * Math.PI) / 180;
-      const x = size / 2 + Math.cos(a) * size * R;
-      const y = size / 2 + Math.sin(a) * size * R;
-      n.style.transform = `translate(${x}px, ${y}px)`;
-      if (i === active) {
-        ray.setAttribute('x2', String(300 + Math.cos(a) * 230));
-        ray.setAttribute('y2', String(300 + Math.sin(a) * 230));
-      }
+  function sync() {
+    if (!timer) return;
+    if (visible && !hovering) timer.resume();
+    else timer.pause();
+  }
+
+  function run() {
+    if (reduced) return;
+    timer?.kill();
+    gsap.set(bars, { scaleX: 0 });
+    timer = gsap.to(bars[active], {
+      scaleX: 1,
+      duration: DWELL,
+      ease: 'none',
+      onComplete: () => select((active + 1) % leaves.length),
     });
+    sync();
   }
 
   function select(i: number) {
-    if (i === active) return;
-    active = i;
-    const v = data[i];
-    nodes.forEach((n, k) => n.setAttribute('aria-selected', String(k === i)));
-    panel.setAttribute('aria-labelledby', `tab-${v.id}`);
-    const swap = () => {
-      $('[data-ind-k]').textContent = `${pad(i + 1)} / ${pad(data.length)}`;
-      $('[data-ind-name]').textContent = v.name;
-      $('[data-ind-line]').textContent = v.line;
-      $('[data-ind-list]').innerHTML = v.items.map((t) => `<li><span>${t}</span></li>`).join('');
-    };
-    if (reduced) return swap();
-    gsap
-      .timeline()
-      .to(panel.children, { y: -14, opacity: 0, duration: 0.25, stagger: 0.03, ease: 'power2.in' })
-      .add(swap)
-      .fromTo(panel.children, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: 'expo.out' })
-      .from(panel.querySelectorAll('li'), { x: -12, opacity: 0, duration: 0.5, stagger: 0.06, ease: 'expo.out' }, '-=0.45');
-    gsap.fromTo('.orbit__core', { scale: 0.92 }, { scale: 1, duration: 0.9, ease: 'elastic.out(1,0.5)' });
+    if (i !== active) {
+      active = i;
+      leaves.forEach((l, k) => l.toggleAttribute('data-active', k === i));
+      tabs.forEach((t, k) => t.setAttribute('aria-expanded', String(k === i)));
+    }
+    run();
   }
 
-  nodes.forEach((n, i) => {
-    n.addEventListener('mouseenter', () => {
-      paused = true;
-      select(i);
-    });
-    n.addEventListener('mouseleave', () => (paused = false));
-    n.addEventListener('focus', () => {
-      paused = true;
-      select(i);
-    });
-    n.addEventListener('blur', () => (paused = false));
-    n.addEventListener('click', () => select(i));
-    n.addEventListener('keydown', (e) => {
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(i));
+    t.addEventListener('focus', () => select(i));
+    t.addEventListener('keydown', (e) => {
       const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
       if (d) {
         e.preventDefault();
-        nodes[(i + d + nodes.length) % nodes.length].focus();
+        tabs[(i + d + tabs.length) % tabs.length].focus();
       }
     });
   });
 
-  layout();
-  window.addEventListener('resize', layout);
+  // desktop: hovering a collapsed panel opens it; anywhere on the deck pauses the timer
+  const hoverOpen = window.matchMedia('(hover: hover) and (min-width: 901px)');
+  leaves.forEach((l, i) => l.addEventListener('pointerenter', () => hoverOpen.matches && i !== active && select(i)));
+  deck.addEventListener('pointerenter', () => ((hovering = true), sync()));
+  deck.addEventListener('pointerleave', () => ((hovering = false), sync()));
 
-  if (!reduced) {
-    let visible = false;
-    new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(orbit);
-    gsap.ticker.add(() => {
-      if (!visible || paused || window.innerWidth < 900) return;
-      angle += 0.06;
-      layout();
-    });
-    // fade the node contents in. Opacity only: transforms would clash with the
-    // buttons' centring translate and the dots' CSS scale transition
-    gsap.from(nodes.flatMap((n) => Array.from(n.children)), {
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.06,
-      ease: 'power2.out',
-      scrollTrigger: { trigger: orbit, start: 'top 75%' },
-    });
-  }
+  new IntersectionObserver(([e]) => ((visible = e.isIntersecting), sync()), { threshold: 0.35 }).observe(deck);
+  run();
 </script>
 
 <style>
@@ -180,184 +135,301 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .ind__title em {
     color: var(--emerald);
   }
-  .ind__grid {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: clamp(40px, 6vw, 100px);
-    align-items: center;
+
+  .deck {
+    display: flex;
+    gap: 12px;
+    height: clamp(500px, 44vw, 600px);
+    container-type: inline-size;
     margin-top: clamp(40px, 6vw, 80px);
   }
-
-  .orbit {
+  .leaf {
     position: relative;
-    width: 100%;
-    max-width: 620px;
-    aspect-ratio: 1;
-    justify-self: center;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 24px;
+    background: color-mix(in srgb, #fff 55%, var(--ivory));
+    box-shadow: inset 0 0 0 1px var(--line);
+    color: var(--forest);
+    transition: flex-grow 0.9s var(--ease), background 0.6s var(--ease), color 0.6s var(--ease),
+      box-shadow 0.6s var(--ease);
   }
-  .orbit__rings {
+  .leaf::before {
+    /* the open panel's deep-green finish, faded in rather than swapped */
+    content: '';
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
-    fill: none;
-    stroke: var(--forest);
-    stroke-opacity: 0.22;
+    background: radial-gradient(120% 90% at 18% 12%, #1a8f6c 0%, var(--emerald) 28%, var(--forest) 72%);
+    opacity: 0;
+    transition: opacity 0.7s var(--ease);
   }
-  .orbit__rings .dash {
-    stroke-dasharray: 2 6;
-    stroke-opacity: 0.35;
+  .leaf:not([data-active]):hover {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--forest) 35%, transparent);
   }
-  .orbit__rings .faint {
-    stroke-opacity: 0.08;
-  }
-  .orbit__rings line {
-    stroke: var(--gold);
-    stroke-opacity: 0.9;
-    stroke-width: 1.4;
-  }
-  .orbit__core {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 32%;
-    aspect-ratio: 1;
-    margin: -16% 0 0 -16%;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: radial-gradient(circle at 32% 28%, #1a8f6c 0%, var(--emerald) 30%, var(--forest) 75%);
-    box-shadow: inset 0 -20px 40px rgba(0, 0, 0, 0.25), inset 0 0 0 1px rgba(198, 161, 91, 0.6),
-      0 30px 80px -20px rgba(7, 61, 50, 0.5);
+  .leaf[data-active] {
+    flex-grow: 4.6;
     color: var(--ivory);
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    font-size: clamp(14px, 1.6vw, 20px);
+    box-shadow: inset 0 0 0 1px rgba(198, 161, 91, 0.45), 0 40px 80px -40px rgba(7, 61, 50, 0.55);
   }
-  .orbit__nodes {
+  .leaf[data-active]::before {
+    opacity: 1;
+  }
+
+  /* collapsed face: number on top, rotated name along the bottom */
+  .leaf__tab {
     position: absolute;
     inset: 0;
-  }
-  .onode {
-    position: absolute;
-    left: 0;
-    top: 0;
+    z-index: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-    translate: -50% -9px;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--forest);
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 28px 24px;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
   }
-  .onode i {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--ivory);
-    border: 1.5px solid var(--forest);
-    transition: background 0.35s, transform 0.5s var(--ease), border-color 0.35s;
-    flex: none;
-  }
-  .onode span {
-    padding: 6px 12px;
-    border-radius: 99px;
-    background: color-mix(in srgb, var(--ivory) 85%, transparent);
-    box-shadow: inset 0 0 0 1px var(--line);
-    transition: background 0.35s, color 0.35s;
-  }
-  .onode[aria-selected='true'] i {
-    background: var(--gold);
-    border-color: var(--gold);
-    transform: scale(1.35);
-  }
-  .onode[aria-selected='true'] span {
-    background: var(--forest);
-    color: var(--ivory);
-  }
-
-  .ind__panel {
-    border-left: 1px solid var(--rule);
-    padding-left: clamp(24px, 3vw, 48px);
-  }
-  .ind__k {
+  .leaf__k {
     font-family: var(--f-mono);
     font-size: 12px;
     letter-spacing: 0.12em;
     color: var(--gold);
+  }
+  .leaf__name {
+    font-family: var(--f-serif);
+    font-size: clamp(22px, 2vw, 30px);
+    line-height: 1;
+    white-space: nowrap;
+    writing-mode: vertical-rl;
+    rotate: 180deg;
+    transition: opacity 0.35s var(--ease), translate 0.6s var(--ease);
+  }
+  .leaf__plus {
+    position: absolute;
+    top: 22px;
+    right: 20px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px var(--line);
+    transition: opacity 0.35s var(--ease), rotate 0.6s var(--ease);
+  }
+  .leaf__plus::before,
+  .leaf__plus::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 10px;
+    height: 1px;
+    margin: -0.5px 0 0 -5px;
+    background: currentColor;
+  }
+  .leaf__plus::after {
+    rotate: 90deg;
+  }
+  .leaf:not([data-active]):hover .leaf__plus {
+    rotate: 90deg;
+  }
+  .leaf[data-active] .leaf__tab {
+    pointer-events: none;
+  }
+  .leaf[data-active] .leaf__name,
+  .leaf[data-active] .leaf__plus,
+  .leaf[data-active] .leaf__k {
+    opacity: 0;
+    translate: 0 12px;
+  }
+  .leaf__k {
+    transition: opacity 0.35s var(--ease), translate 0.6s var(--ease);
+  }
+
+  /* open face */
+  .leaf__body {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    visibility: hidden;
+    transition: visibility 0s 0.35s;
+  }
+  .leaf[data-active] .leaf__body {
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  .leaf__inner {
+    --pad: clamp(28px, 3.4vw, 52px);
+    position: absolute;
+    left: var(--pad);
+    bottom: clamp(28px, 3.4vw, 48px);
+    top: clamp(28px, 3.4vw, 48px);
+    /* fixed width so the copy never reflows while the panel is widening */
+    width: calc((100cqw - 48px) * 4.6 / 8.6 - 2 * var(--pad));
+    display: flex;
+    flex-direction: column;
+  }
+  .leaf__count {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--gold-soft);
     margin: 0;
   }
-  .ind__name {
+  .leaf__title {
     font-family: var(--f-serif);
-    font-size: clamp(40px, 5vw, 78px);
-    color: var(--forest);
-    margin: 18px 0 16px;
+    font-size: clamp(38px, 4.2vw, 68px);
     line-height: 1.02;
     font-weight: 400;
+    margin: 18px 0 14px;
   }
-  .ind__line {
-    color: var(--fg-muted);
-    margin: 0 0 32px;
-    max-width: 38ch;
-  }
-  .ind__list {
-    list-style: none;
+  .leaf__line {
+    color: color-mix(in srgb, var(--ivory) 72%, transparent);
     margin: 0;
-    padding: 0;
-    border-top: 1px solid var(--rule);
+    max-width: 40ch;
   }
-  .ind__list :global(li) {
+  .leaf__list {
+    list-style: none;
+    margin: auto 0 0;
+    padding: 0;
+    border-top: 1px solid rgba(245, 245, 240, 0.16);
+  }
+  .leaf__list li {
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--rule);
-    font-size: clamp(18px, 1.6vw, 22px);
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(245, 245, 240, 0.16);
+    font-size: clamp(17px, 1.5vw, 21px);
     letter-spacing: -0.015em;
   }
-  .ind__list :global(li)::before {
+  .leaf__list li::before {
     content: '';
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    background: var(--emerald);
+    background: var(--gold);
     flex: none;
   }
+  /* staggered entrance: copy waits for the panel to widen, then rises in */
+  .leaf__count,
+  .leaf__title,
+  .leaf__line,
+  .leaf__list li {
+    opacity: 0;
+    translate: 0 18px;
+    transition: opacity 0.25s var(--ease), translate 0.25s var(--ease);
+  }
+  .leaf[data-active] .leaf__count,
+  .leaf[data-active] .leaf__title,
+  .leaf[data-active] .leaf__line,
+  .leaf[data-active] .leaf__list li {
+    opacity: 1;
+    translate: 0 0;
+    transition: opacity 0.7s var(--ease), translate 0.9s var(--ease);
+  }
+  .leaf[data-active] .leaf__count {
+    transition-delay: 0.35s;
+  }
+  .leaf[data-active] .leaf__title {
+    transition-delay: 0.42s;
+  }
+  .leaf[data-active] .leaf__line {
+    transition-delay: 0.5s;
+  }
+  .leaf[data-active] .leaf__list li {
+    transition-delay: calc(0.58s + var(--i) * 0.07s);
+  }
 
+  /* auto-advance progress */
+  .leaf__bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    height: 3px;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .leaf[data-active] .leaf__bar {
+    opacity: 1;
+  }
+  .leaf__bar i {
+    display: block;
+    height: 100%;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  /* small screens: a vertical accordion */
   @media (max-width: 900px) {
-    .ind__grid {
-      grid-template-columns: 1fr;
+    .deck {
+      container-type: normal;
+      flex-direction: column;
+      height: auto;
+      gap: 10px;
     }
-    .orbit {
-      max-width: 420px;
-      width: 88%;
+    .leaf {
+      flex: none;
+      display: grid;
+      grid-template-rows: auto 0fr;
+      transition: grid-template-rows 0.7s var(--ease), background 0.6s var(--ease), color 0.6s var(--ease);
+      border-radius: 18px;
     }
-    .onode {
-      font-size: 12px;
+    .leaf[data-active] {
+      grid-template-rows: auto 1fr;
     }
-    /* small screens: only the selected vertical is labelled; dots get a finger-sized hit area */
-    .onode span {
+    .leaf__tab {
+      position: relative;
+      inset: auto;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 16px;
+      padding: 20px 64px 20px 20px;
+    }
+    .leaf__name {
+      writing-mode: horizontal-tb;
+      rotate: none;
+      font-size: 22px;
+    }
+    .leaf__plus {
+      top: 50%;
+      right: 18px;
+      margin-top: -13px;
+    }
+    .leaf[data-active] .leaf__tab {
+      pointer-events: auto;
+    }
+    .leaf[data-active] .leaf__name,
+    .leaf[data-active] .leaf__k {
+      opacity: 1;
+      translate: none;
+    }
+    .leaf[data-active] .leaf__plus {
+      opacity: 1;
+      translate: none;
+      rotate: 45deg;
+      box-shadow: inset 0 0 0 1px rgba(245, 245, 240, 0.3);
+    }
+    .leaf__body {
+      position: relative;
+      inset: auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .leaf__inner {
+      position: static;
+      width: auto;
+      padding: 0 20px 24px;
+    }
+    .leaf__count,
+    .leaf__title {
       display: none;
     }
-    .onode[aria-selected='true'] span {
-      display: block;
-    }
-    .onode i {
-      position: relative;
-    }
-    .onode i::after {
-      content: '';
-      position: absolute;
-      inset: -13px;
-    }
-    .onode span {
-      padding: 4px 8px;
-    }
-    .ind__panel {
-      border-left: 0;
-      padding-left: 0;
+    .leaf__list {
+      margin-top: 20px;
     }
   }
 </style>
