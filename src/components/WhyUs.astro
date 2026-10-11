@@ -13,7 +13,7 @@ const c = await content('why');
     </div>
     <ol class="why__list">
       {c.items.map((r, i) => (
-        <li class="why__row" data-fade={i * 0.05} data-cursor="Learn +" tabindex="0">
+        <li class="why__row" data-fade={i * 0.05} tabindex="0">
           <span class="why__n">0{i + 1}</span>
           <h3>{r.title}</h3>
           <p>{r.text}</p>

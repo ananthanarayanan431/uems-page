@@ -59,7 +59,7 @@ const nav = site.nav;
             <a href={n.href} class:list={[{ active: path === n.href }]}>{n.label}</a>
           ))}
         </nav>
-        <a href="/contact" class="nav__cta" data-cursor="Explore →">
+        <a href="/contact" class="nav__cta">
           {site.navCta} <span aria-hidden="true">→</span>
         </a>
         <button class="nav__toggle" aria-expanded="false" aria-controls="menu" data-menu-toggle>
@@ -117,11 +117,6 @@ const nav = site.nav;
         </div>
       </div>
     </footer>
-
-    <div class="cursor" aria-hidden="true" data-cursor-el>
-      <div class="cursor__ring"><span class="cursor__label" data-cursor-label></span></div>
-      <div class="cursor__dot"></div>
-    </div>
 
     <script>
       import '../scripts/site';

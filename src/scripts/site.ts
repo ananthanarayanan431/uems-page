@@ -146,44 +146,6 @@ toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expand
 menu?.querySelectorAll('[data-menu-link]').forEach((a) => a.addEventListener('click', () => setMenu(false)));
 
 /* ------------------------------------------------------------------
-   Custom cursor with contextual labels (data-cursor="EXPLORE →")
-------------------------------------------------------------------- */
-const cursor = document.querySelector<HTMLElement>('[data-cursor-el]');
-const label = document.querySelector<HTMLElement>('[data-cursor-label]');
-const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-
-if (cursor && label && finePointer && !reduced) {
-  document.documentElement.classList.add('has-cursor');
-  document.body.classList.add('has-cursor');
-  const ring = cursor.querySelector('.cursor__ring')!;
-  const dot = cursor.querySelector('.cursor__dot')!;
-  const rx = gsap.quickTo(ring, 'x', { duration: 0.45, ease: 'power3.out' });
-  const ry = gsap.quickTo(ring, 'y', { duration: 0.45, ease: 'power3.out' });
-  const dx = gsap.quickTo(dot, 'x', { duration: 0.08 });
-  const dy = gsap.quickTo(dot, 'y', { duration: 0.08 });
-
-  window.addEventListener('pointermove', (e) => {
-    cursor.classList.add('is-live');
-    rx(e.clientX);
-    ry(e.clientY);
-    dx(e.clientX);
-    dy(e.clientY);
-  });
-
-  const setLabel = (text: string | null) => {
-    cursor.classList.toggle('is-label', !!text);
-    if (text) label.textContent = text;
-  };
-
-  document.addEventListener('pointerover', (e) => {
-    const t = (e.target as HTMLElement).closest<HTMLElement>('[data-cursor]');
-    setLabel(t ? t.dataset.cursor! : null);
-  });
-  // Components (e.g. the canvas network) can set labels directly.
-  window.addEventListener('uems:cursor', (e) => setLabel((e as CustomEvent<string | null>).detail));
-}
-
-/* ------------------------------------------------------------------
    Line-by-line headline reveals: <h2 data-reveal> with .split-line>span
    and simple fade-ups on [data-fade]
 ------------------------------------------------------------------- */

@@ -18,7 +18,7 @@ const c = await content('paths');
 
     <div class="paths__grid">
       {c.items.map((p, i) => (
-        <a class="path" href={p.href} data-fade={i * 0.08} data-cursor="Learn +">
+        <a class="path" href={p.href} data-fade={i * 0.08}>
           <span class="path__n">0{i + 1}</span>
           <h3>{p.title}</h3>
           <p>{p.text}</p>

@@ -86,7 +86,7 @@ const c = await content('about');
       <p class="eyebrow" data-fade>{c.values.eyebrow}</p>
       <div class="vals__grid">
         {c.values.items.map((v, i) => (
-          <article class="val" data-fade={i * 0.1} data-cursor="Learn +">
+          <article class="val" data-fade={i * 0.1}>
             <svg viewBox="0 0 80 80" aria-hidden="true" class="val__icon">
               <circle cx="40" cy="40" r="34" />
               {i === 0 && <path d="M24 41 L35 52 L57 29" />}

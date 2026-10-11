@@ -34,10 +34,10 @@ const site = await content('site');
     <p class="fin__ask">{c.ask}</p>
     <p class="fin__lede">{c.lede}</p>
     <div class="fin__ctas">
-      <a href="/contact" class="btn btn--gold" data-cursor="Explore →">
+      <a href="/contact" class="btn btn--gold">
         {c.button} <span class="arrow" aria-hidden="true">→</span>
       </a>
-      <a href={`mailto:${site.email}`} class="fin__mail" data-cursor="Write ✉">{site.email}</a>
+      <a href={`mailto:${site.email}`} class="fin__mail">{site.email}</a>
     </div>
 
     <dl class="fin__meta">

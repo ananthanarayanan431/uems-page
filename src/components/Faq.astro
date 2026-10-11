@@ -14,7 +14,7 @@ const c = await content('faq');
     <div class="faq__list">
       {c.items.map((f, i) => (
         <details class="qa" open={i === 0} data-fade={i * 0.04}>
-          <summary data-cursor="Learn +">
+          <summary>
             <span>{f.question}</span>
             <i aria-hidden="true"></i>
           </summary>
